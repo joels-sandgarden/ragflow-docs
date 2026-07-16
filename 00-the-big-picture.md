@@ -29,7 +29,7 @@ The query plane begins in `api/db/services/dialog_service.py` and flows through 
 ```mermaid
 flowchart LR
   subgraph Control["Control plane"]
-    HTTP["Flask / Quart server"]
+    HTTP["Quart"]
     API["Blueprints and REST routes"]
     HTTP --> API
   end

@@ -38,7 +38,7 @@ flowchart LR
 
 ## Work scheduling: turning one upload into many tasks
 
-`TaskService.queue_tasks()` fans a single document out into one or more `Task` rows. PDF files can split across page windows, and table files can split across row windows, so the worker handles bounded slices instead of one giant unit of work. `DocumentService.begin2parse()` marks the document as queued before the worker starts, and Redis streams plus consumer groups keep pending messages alive across worker restarts. The consumer loop in `rag/utils/redis_conn.py` reads the stream, tracks the pending set, and exposes queue lag so the UI can show honest progress.
+`queue_tasks()` in `task_service.py` fans a single document out into one or more `Task` rows. PDF files can split across page windows, and table files can split across row windows, so the worker handles bounded slices instead of one giant unit of work. `DocumentService.begin2parse()` marks the document as queued before the worker starts, and Redis streams plus consumer groups keep pending messages alive across worker restarts. The consumer loop in `rag/utils/redis_conn.py` reads the stream, tracks the pending set, and exposes queue lag so the UI can show honest progress.
 
 ## The worker: one long running orchestrator
 
