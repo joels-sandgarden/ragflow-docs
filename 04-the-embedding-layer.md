@@ -27,7 +27,7 @@ The catalog in that file includes providers such as `OpenAIEmbed`, `QWenEmbed`, 
 
 ## How a dataset chooses its model
 
-The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService` reads that field back, and the ingestion worker resolves it through `tenant_llm_service.py` and `llm_service.py` when it prepares a task. The call chain runs from the `KnowledgebaseService` record to tenant-scoped model config, then to `TenantLLMService.model_instance()`, and finally to `LLMBundle`, which resolves the concrete embedding class at call time.
+The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService` reads that field back, and the ingestion worker resolves it through `tenant_llm_service.py` and `llm_service.py` when it prepares a task. The call chain runs from the `KnowledgebaseService` record to tenant-scoped model config, then to `LLMBundle`, which calls `TenantLLMService.model_instance()` during construction to resolve the concrete embedding class.
 
 That design matters because the same tenant can own several model families, but a dataset still needs one clear default. The knowledge base configuration guide at [ragflow.io/docs/dev/configure_knowledge_base](https://ragflow.io/docs/dev/configure_knowledge_base) covers the UI step that writes the dataset model choice; the runtime path later uses the stored value instead of asking for a fresh selection on every parse.
 
