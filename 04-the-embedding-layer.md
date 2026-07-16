@@ -27,7 +27,7 @@ The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService
 
 That design matters because the same tenant can own several model families, but a dataset still needs one clear default. The knowledge base configuration guide at [ragflow.io/docs/dev/configure_knowledge_base](https://ragflow.io/docs/dev/configure_knowledge_base) covers the UI step that writes the dataset model choice; the runtime path later uses the stored value instead of asking for a fresh selection on every parse.
 
-`api/db/joint_services/tenant_model_service.py` adds a newer per-instance model configuration layer. It matters, but it does not replace the dataset story here. The dataset record still anchors the ingestion run, while the joint service gives the app a finer way to resolve which concrete instance backs a named model.
+A newer per-instance model configuration layer lives in `api/db/joint_services/tenant_model_service.py`. It adds finer resolution for model instances, but it stays secondary to the dataset story here. The dataset record still anchors the ingestion run, while the joint service gives the app a finer way to resolve which concrete instance backs a named model.
 
 ## Why the choice stays pinned
 
