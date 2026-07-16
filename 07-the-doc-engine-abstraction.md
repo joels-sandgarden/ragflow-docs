@@ -1,10 +1,10 @@
 # The document engine abstraction
 
-RAGFlow defines a document engine because retrieval needs a narrow mix of capabilities: hybrid full text and vector scoring over the same chunks, bulk writes, and per tenant isolation. This page complements [Anatomy of a Query](./01-anatomy-of-a-query.md) by focusing on the storage contract instead of the end to end retrieval path. The Python runtime remains the canonical production implementation as of mid 2026, and the abstraction keeps callers stable while Infinity can stand in as a practical alternative to Elasticsearch.
+RAGFlow defines a document engine because retrieval needs a narrow mix of capabilities: hybrid full text and vector scoring over the same chunks, bulk writes, and per tenant isolation. This page complements [Anatomy of a Query](./01-anatomy-of-a-query.md) and keeps the Python runtime as the canonical production implementation as of mid 2026, while Infinity can stand in as a practical alternative to Elasticsearch.
 
 ## Why this layer exists
 
-The abstraction exists for a workload, not for a general search platform. The retrieval layer needs to express lexical intent, dense similarity, sparse and tensor style matches, and sort order without hard coding engine syntax, because the same chunk records must support search, bulk mutation, and tenant scoped reads. The operational switch lives in [Switch document engine](./docs/develop/switch_doc_engine.md), but this page describes the design that makes that switch possible.
+The abstraction serves a workload, not a general search platform. The retrieval layer needs to express lexical intent, dense similarity, sparse and tensor style matches, and sort order without hard coding engine syntax, because the same chunk records must support search, bulk mutation, and tenant scoped reads. The operational switch lives in [Switch document engine](./docs/develop/switch_doc_engine.md), but this page describes the design that makes that switch possible.
 
 ## The portable contract
 
@@ -16,7 +16,7 @@ The abstraction exists for a workload, not for a general search platform. The re
 
 `common/settings.py` reads `DOC_ENGINE`, selects the concrete singleton, stores it in `settings.docStoreConn`, and wires the retriever objects from the same choice. `elasticsearch` loads `rag.utils.es_conn.ESConnection`, `infinity` loads `rag.utils.infinity_conn.InfinityConnection`, `oceanbase` and `seekdb` load `rag.utils.ob_conn.OBConnection`, and `opensearch` loads `rag.utils.opensearch_conn.OSConnection`.
 
-The shared base classes in `common/doc_store/` hold the common contract, while the concrete adapters in `rag/utils/` supply the backend specific translation. `ESConnection`, `InfinityConnection`, `OBConnection`, and `OSConnection` all honor the same abstract shape, but each one maps the portable expressions into different storage and scoring rules.
+The shared base classes in `common/doc_store/` hold the common contract, while the concrete adapters in `rag/utils/` supply the backend specific translation. `ESConnection`, `InfinityConnection`, `OBConnection`, and `OSConnection` honor the same abstract shape, but each one maps the portable expressions into different storage and scoring rules.
 
 ## The schema contract
 
