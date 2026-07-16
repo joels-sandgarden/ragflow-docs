@@ -33,7 +33,7 @@ The shared base classes in `common/doc_store/` hold the common contract, while t
 
 ## The schema contract
 
-The mapping files describe one conceptual chunk record, not four unrelated schemas. `conf/mapping.json` gives Elasticsearch and OpenSearch the suffix driven field model: tokenized text fields, keyword fields, rank feature fields, and dense vectors such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. `conf/infinity_mapping.json` expresses the same idea through Infinity's column model with fields such as `docnm`, `important_keywords`, `questions`, `content`, `authors`, `pagerank_fea`, `tag_feas`, and positional fields.
+The mapping files describe one conceptual chunk record, not four unrelated schemas. `conf/mapping.json` gives Elasticsearch the suffix driven field model: tokenized text fields, keyword fields, rank feature fields, and dense vectors such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. `conf/os_mapping.json` gives OpenSearch the same idea through its own dynamic templates and suffix conventions. `conf/infinity_mapping.json` expresses the same idea through Infinity's column model with fields such as `docnm`, `important_keywords`, `questions`, `content`, `authors`, `pagerank_fea`, `tag_feas`, and positional fields.
 
 The adapters reshape that model before storage. Infinity turns the chunk into its own column layout, ES and OpenSearch lean on dynamic mappings that follow the suffix conventions, and OceanBase stores the record as SQL columns, arrays, and JSON values. The metadata tables follow the same pattern: `conf/doc_meta_es_mapping.json` and `conf/doc_meta_infinity_mapping.json` define the per tenant `ragflow_doc_meta_{tenant_id}` contract.
 
