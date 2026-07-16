@@ -46,7 +46,7 @@ That shared layer solves two problems at once. First, it keeps the raw text clos
 
 A chunk is not just a text string. It usually carries the content that retrieval ranks, the tokenized content that indexing consumes, an embedding vector for semantic search, keywords for enrichment, source positions for traceability, and image or media markers when the source contains non-text material. The executor in `rag/svr/task_executor.py` stamps IDs, writes chunk rows into the document store, and stores image bytes in MinIO-backed storage before the chunk enters retrieval.
 
-That storage contract matters because it keeps user-visible behavior stable even when the upstream template changes. The indexing layer sees a shaped chunk with text, metadata, and optional media, not a parser-specific artifact. For the storage and search boundary, see [/07-the-doc-engine-abstraction.md](07-the-doc-engine-abstraction.md).
+That storage contract matters because it keeps user-visible behavior stable even when the upstream template changes. The indexing layer sees a shaped chunk with text, metadata, and optional media, not a parser-specific artifact. For the storage and search boundary, see [/07-the-doc-engine-abstraction.md](/07-the-doc-engine-abstraction.md).
 
 ## A dated note on the next path
 
