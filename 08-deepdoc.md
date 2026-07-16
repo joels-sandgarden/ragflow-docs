@@ -8,7 +8,7 @@ If the ingestion path needs a broader context, see [Anatomy of ingestion](./02-a
 
 PDFs do not behave like plain text files. A PDF can carry a usable text layer, a scanned page image, or a mixture of both, and the reading order can break across columns, captions, headers, and tables. DeepDoc treats that as a visual interpretation problem because the page image often carries more reliable structure than the text layer alone.
 
-The baseline parser renders each page with `pdfplumber`, then lets `OCR` recover text boxes and `LayoutRecognizer` attach page-level structure. The OCR path in `deepdoc/vision/ocr.py` also rejects obviously garbled text and falls back to recognition when the embedded PDF text layer looks broken. That keeps the parser honest when the file contains fonts, encodings, or scanned regions that text extraction cannot decode well.
+The baseline parser renders each page with `pdfplumber`, then lets `OCR` recover text boxes and `LayoutRecognizer` attach page-level structure. The garbled-text rejection and fallback live in `deepdoc/parser/pdf_parser.py` (`RAGFlowPdfParser`); `deepdoc/vision/ocr.py` does detection and recognition only. That keeps the parser honest when the file contains fonts, encodings, or scanned regions that text extraction cannot decode well.
 
 ## DeepDoc splits the problem into parser and vision
 
@@ -31,7 +31,7 @@ The pipeline moves through a clear chain:
 5. Rebuild reading order with the text merge helpers and the `updown_concat_xgb.model` scorer.
 6. Emit ordered sections and table artifacts that downstream chunking can consume.
 
-The layout recognizer works with the labels in `deepdoc/vision/layout_recognizer.py`: `_background_`, `Text`, `Title`, `Figure`, `Figure caption`, `Table`, `Table caption`, `Header`, `Footer`, `Reference`, and `Equation`. The table structure recognizer works with `table`, `table column`, `table row`, `table column header`, `table projected row header`, and `table spanning cell`. Those labels matter because they determine which boxes stay in prose, which boxes become table content, and which boxes drop out as page furniture.
+The layout recognizer works with the labels in `deepdoc/vision/layout_recognizer.py`: `_background_`, `Text`, `Title`, `Figure`, `Figure caption`, `Table`, `Table caption`, `Header`, `Footer`, `Reference`, and `Equation`, and the default `LayoutRecognizer4YOLOv10` path overrides that base list with a smaller runtime set. The table structure recognizer works with `table`, `table column`, `table row`, `table column header`, `table projected row header`, and `table spanning cell`. Those labels matter because they determine which boxes stay in prose, which boxes become table content, and which boxes drop out as page furniture.
 
 DeepDoc also treats figures as first-class page regions. `RAGFlowPdfParser._extract_table_figure` crops figure and table regions from the rendered page images, preserves their position tags, and emits them as separate artifacts. That keeps the figure image available to later enrichment without flattening it into unrelated body text.
 
@@ -51,8 +51,8 @@ That contract also explains why the parser package exports `PdfParser` and `Plai
 
 ## Where to look in the code
 
-- `deepdoc/parser/pdf_parser.py` — baseline PDF orchestration, OCR, layout tagging, table assembly, reading order, and figure cropping.
-- `deepdoc/vision/ocr.py` — page image text detection and recognition, plus the fallback that replaces garbled PDF text.
+- `deepdoc/parser/pdf_parser.py` — baseline PDF orchestration, OCR fallback for garbled PDF text, layout tagging, table assembly, reading order, and figure cropping.
+- `deepdoc/vision/ocr.py` — page image text detection and recognition.
 - `deepdoc/vision/layout_recognizer.py` — layout labels, page-level tagging, and the `LayoutRecognizer4YOLOv10` path.
 - `deepdoc/vision/table_structure_recognizer.py` — table labels, span recovery, and the HTML or prose table reconstruction logic.
 - `deepdoc/parser/figure_parser.py` — vision LLM enrichment for figures and image blocks.

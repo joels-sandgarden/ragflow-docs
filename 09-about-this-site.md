@@ -25,5 +25,5 @@ Corrections or repository links: [CONTACT_OR_REPO_LINK placeholder for the opera
 - [04-the-embedding-layer](./04-the-embedding-layer.md) — one interface over ~45 embedding providers, and where vectors live
 - [05-graphrag](./05-graphrag.md) — knowledge-graph construction and retrieval: extractors, entity resolution, communities
 - [06-the-canvas-orchestrator](./06-the-canvas-orchestrator.md) — the agent workflow engine: graph DSL, scheduler, variables, loops
-- [07-the-doc-engine-abstraction](./07-the-doc-engine-abstraction.md) — one search API over Elasticsearch, Infinity, and OceanBase
+- [07-the-doc-engine-abstraction](./07-the-doc-engine-abstraction.md) — one search API over Elasticsearch, OpenSearch, Infinity, and OceanBase
 - [08-deepdoc](./08-deepdoc.md) — deep document understanding: OCR, layout recognition, table structure
