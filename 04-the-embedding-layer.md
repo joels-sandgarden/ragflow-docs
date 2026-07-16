@@ -5,7 +5,7 @@ slug: /04-the-embedding-layer
 
 # The Embedding Layer
 
-The embedding layer turns chunks and questions into vectors that the doc engine can compare quickly. It sits between model selection and retrieval, so the rest of the app asks for meaning-preserving vectors instead of hard-coding a provider. That split keeps the ingestion path and search path aligned even when providers expose different limits, batching rules, or output formats.
+The embedding layer turns chunks and questions into vectors that the doc engine can compare quickly. It sits between model selection and retrieval, so the rest of the app uses one shared abstraction instead of calling providers directly. That split keeps the ingestion path and search path aligned even when providers expose different limits, batching rules, or output formats.
 
 ## Series map
 
