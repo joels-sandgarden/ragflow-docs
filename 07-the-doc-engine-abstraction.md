@@ -58,5 +58,5 @@ As of July 2026, the Go rewrite under `internal/engine/` mirrors this design wit
 - `common/doc_store/doc_store_base.py` — core abstract interface and portable query objects.
 - `common/settings.py` — `DOC_ENGINE` selection and `settings.docStoreConn` wiring.
 - `rag/nlp/search.py` — `Dealer`, query composition, and rerank branching.
-- `conf/mapping.json`, `conf/infinity_mapping.json`, `conf/doc_meta_es_mapping.json`, `conf/doc_meta_infinity_mapping.json` — chunk and metadata schema contracts.
+- `conf/mapping.json`, `conf/os_mapping.json`, `conf/infinity_mapping.json`, `conf/doc_meta_es_mapping.json`, `conf/doc_meta_infinity_mapping.json` — chunk and metadata schema contracts.
 - `rag/utils/es_conn.py`, `rag/utils/infinity_conn.py`, `rag/utils/ob_conn.py`, `rag/utils/opensearch_conn.py` — concrete adapters and backend specific search behavior.
