@@ -45,7 +45,7 @@ The doc engine stores vectors in fields whose names encode the vector size, such
 
 The query-time path mirrors that shape. `rag/nlp/search.py` sends the question through `Dealer.get_vector()`, which calls `encode_queries()`, converts the result into a `q_<dim>_vec` lookup, and feeds that into the retrieval query. The same dimension that the model returned at ingestion now decides which vector field retrieval reads at search time.
 
-RAPTOR uses the same stored vectors and skips chunks that lack the expected vector field, which keeps older parses from breaking the graph build. GraphRAG follows a separate side path in `rag/graphrag/general/entity_embedding.py`, where node embeddings support graph-specific work rather than the document index itself. For that branch of the system, see [05 graphrag](./05-graphrag.md).
+RAPTOR uses the same stored vectors and skips chunks that lack the expected vector field, which keeps older parses from breaking the summary tree build. GraphRAG follows a separate side path in `rag/graphrag/utils.py`, where `graph_node_to_chunk` and `graph_edge_to_chunk` produce the vectors that vector search uses; `rag/graphrag/general/entity_embedding.py` is just an unused node2vec utility. For that branch of the system, see [05 graphrag](./05-graphrag.md).
 
 ## Storage and reranking
 
