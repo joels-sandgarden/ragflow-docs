@@ -8,7 +8,7 @@ RAGFlow turns documents into retrievable knowledge, answers questions with citat
 
 The core lifecycle runs through `Knowledgebase` → `Document` → `Task` → chunk retrieval data. `Knowledgebase`, `Document`, and `Task` live as relational rows in `api/db/db_models.py`, while chunk text, vectors, and search behavior live outside SQL in the pluggable document engine behind `common/doc_store/doc_store_base.py` and `rag/nlp/search.py`.
 
-That split keeps metadata in transactional relational storage and keeps chunk text, vector state, and search semantics in the engine that owns retrieval.
+That split keeps metadata transactional while the document engine owns chunk storage, vector search, and retrieval semantics.
 
 ## Three planes, one system
 
@@ -18,7 +18,7 @@ The HTTP control plane starts in `api/ragflow_server.py` and assembles the Quart
 
 ### Data plane
 
-The async ingestion plane runs in `rag/svr/task_executor.py`, which pulls `Task` work from the Redis-backed queue names in `common/settings.py`. It parses source files, creates chunks, generates embeddings and metadata, and writes the resulting chunk records into the document engine. See [/02-anatomy-of-ingestion.md](/02-anatomy-of-ingestion.md).
+The async ingestion plane runs in `rag/svr/task_executor.py`, which consumes `Task` rows through the Redis streams behind the queue names in `common/settings.py`. It parses source files, creates chunks, generates embeddings and metadata, and writes the resulting chunk records into the document engine. See [/02-anatomy-of-ingestion.md](/02-anatomy-of-ingestion.md).
 
 ### Query plane
 
@@ -87,7 +87,7 @@ For operator-facing behavior, the official guides cover [knowledge base configur
 
 `common/settings.py` and `conf/service_conf.yaml` define the deployment shape that the rest of the system assumes. MySQL stores dataset, document, task, and dialog metadata; Redis carries queue state and coordination signals; object storage such as MinIO holds raw files and other binary artifacts; and the document engine stores chunks, vectors, and search indices.
 
-The same settings module wires the retriever and knowledge graph retriever to the selected backend so control plane requests and worker jobs share one retrieval stack.
+The same settings module wires `docStoreConn`, `retriever`, and `kg_retriever` to the selected backend so control plane requests and worker jobs share one retrieval stack.
 
 ## Migration note
 
