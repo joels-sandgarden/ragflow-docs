@@ -2,6 +2,7 @@
 sidebar_position: 8
 slug: /08-deepdoc
 ---
+
 # DeepDoc
 
 DeepDoc is RAGFlow's document understanding layer. It turns page images and structured source files into ordered text, tables, and figure regions, then hands that material to chunking for retrieval. Layout carries meaning here: a title, a table cell, a caption, a header, or a figure region changes what retrieval can recover later.
