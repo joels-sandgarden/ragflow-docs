@@ -2,7 +2,7 @@
 
 RAGFlow keeps more than one chunking template because retrieval works best when each chunk boundary matches the document genre. A legal code, a slide deck, a resume, and an email thread each lose different meaning when one splitter treats them the same way.
 
-The dispatcher in `rag/svr/task_executor.py` forms the seam. `FACTORY` maps each `parser_id` to a module in `rag/app/`, and `build_chunks()` loads the file, merges parser configuration, and hands the task to `chunk()`. That split matters because the template zoo preserves source specific structure instead of offering interchangeable ways of saying the same thing.
+The dispatcher in `rag/svr/task_executor.py` forms the seam. `FACTORY` maps each `parser_id` to a module in `rag/app/`, and `build_chunks()` loads the file, merges parser configuration, and hands the task to `chunk()`. That split matters because the template zoo preserves source specific structure instead of offering interchangeable ways of saying the same thing. The parser selection details live in `./08-deepdoc.md`.
 
 ## The shared chunk contract
 
