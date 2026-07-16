@@ -39,21 +39,21 @@ DeepDoc also treats figures as first-class page regions. `RAGFlowPdfParser._extr
 
 The baseline parser does not own the whole ecosystem. The `deepdoc/parser/` package also carries adapters for Docling, MinerU, OpenDataLoader, PaddleOCR, SoMark, and Tencent Cloud ADP. Those modules translate external parse engines back into the same section and table contract that the rest of DeepDoc expects, so the downstream chunker sees a familiar shape even when the source engine changes.
 
-As of this snapshot, the adapter roster in `deepdoc/parser/` continues to expand, and the vision backed figure path now appears both in the baseline parser and in adapter specific enrichment hooks. `deepdoc/parser/figure_parser.py` uses the tenant `LLMType.VISION` model to describe images and append those descriptions to figure text. `MinerUParser` follows the same idea in `_enhance_images_with_vlm`, which adds semantic image descriptions before the parser hands sections back to ingestion.
+As of this snapshot, the adapter roster in `deepdoc/parser/` continues to expand, and the vision-backed figure path now appears both in the baseline parser and in adapter-specific enrichment hooks. `deepdoc/parser/figure_parser.py` uses the tenant `LLMType.VISION` model to describe images and append those descriptions to figure text. `MinerUParser` follows the same idea in `_enhance_images_with_vlm`, which adds semantic image descriptions before the parser hands sections back to ingestion.
 
-That difference matters at a conceptual level. The default DeepDoc path extracts structure locally and deterministically. The third party adapters trade some of that control for an external model or service, while the vision LLM path adds semantic depth to figures and images without changing the surrounding section contract.
+That difference matters at a conceptual level. The default DeepDoc path extracts structure locally and deterministically. The third-party adapters trade some of that control for an external model or service, while the vision-LLM path adds semantic depth to figures and images without changing the surrounding section contract.
 
 ## How the output reaches chunking
 
 DeepDoc does not stop at recognition. It converts the page into a reading order that downstream chunking can trust. The parser keeps position tags with each box, merges lines when the content and geometry justify it, and leaves tables and figures in separate lanes when they need different handling. The result is not raw OCR output. The result is structured text plus geometry that the ingestion pipeline can slice into chunks with less guesswork.
 
-That contract also explains why the parser package exports `PdfParser` and `PlainParser` alongside the format specific adapters in `deepdoc/parser/__init__.py`. The package gives ingestion a default path for PDF understanding and a lighter path for simpler text extraction, but both paths still feed the same larger chunking story.
+That contract also explains why the parser package exports `PdfParser` and `PlainParser` alongside the format-specific adapters in `deepdoc/parser/__init__.py`. The package gives ingestion a default path for PDF understanding and a lighter path for simpler text extraction, but both paths still feed the same larger chunking story.
 
 ## Where to look in the code
 
 - `deepdoc/parser/pdf_parser.py` — baseline PDF orchestration, OCR, layout tagging, table assembly, reading order, and figure cropping.
 - `deepdoc/vision/ocr.py` — page image text detection and recognition, plus the fallback that replaces garbled PDF text.
-- `deepdoc/vision/layout_recognizer.py` — layout labels, page level tagging, and the `LayoutRecognizer4YOLOv10` path.
+- `deepdoc/vision/layout_recognizer.py` — layout labels, page-level tagging, and the `LayoutRecognizer4YOLOv10` path.
 - `deepdoc/vision/table_structure_recognizer.py` — table labels, span recovery, and the HTML or prose table reconstruction logic.
 - `deepdoc/parser/figure_parser.py` — vision LLM enrichment for figures and image blocks.
 - `deepdoc/parser/*.py` — Docling, MinerU, OpenDataLoader, PaddleOCR, SoMark, and TCADP adapters that map external parsers back into the DeepDoc contract.
