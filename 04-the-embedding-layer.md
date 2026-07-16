@@ -25,7 +25,7 @@ The catalog in that file includes providers such as `OpenAIEmbed`, `QWenEmbed`, 
 
 The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService` reads that field back, and the ingestion worker resolves it through `tenant_llm_service.py` and `llm_service.py` when it prepares a task. The call chain runs from the `KnowledgebaseService` record to tenant-scoped model config, then to `TenantLLMService.model_instance()`, and finally to `LLMBundle`, which resolves the concrete embedding class at call time.
 
-That design matters because the same tenant can own several model families, but a dataset still needs one clear default. The setup guide at https://ragflow.io/docs/dev/configure_knowledge_base covers the UI step that writes the dataset model choice; the runtime path later uses the stored value instead of asking for a fresh selection on every parse.
+That design matters because the same tenant can own several model families, but a dataset still needs one clear default. The knowledge base configuration guide at [ragflow.io/docs/dev/configure_knowledge_base](https://ragflow.io/docs/dev/configure_knowledge_base) covers the UI step that writes the dataset model choice; the runtime path later uses the stored value instead of asking for a fresh selection on every parse.
 
 `api/db/joint_services/tenant_model_service.py` adds a newer per-instance model configuration layer. It matters, but it does not replace the dataset story here. The dataset record still anchors the ingestion run, while the joint service gives the app a finer way to resolve which concrete instance backs a named model.
 
