@@ -49,7 +49,7 @@ RAPTOR uses the same stored vectors and skips chunks that lack the expected vect
 
 ## Storage and reranking
 
-The vector lives beside the chunk text in the doc engine record, not in a separate vector store. `conf/mapping.json` and `conf/infinity_mapping.json` show that pairing clearly: the text fields and the `q_<dim>_vec` fields travel together inside the same chunk. That shared record layout keeps retrieval simple, but it also locks the data to the model family that created it.
+The vector lives beside the chunk text in the doc engine record, not in a separate vector store. `conf/mapping.json` shows that pairing clearly: the text fields and the `q_<dim>_vec` fields travel together inside the same chunk. Infinity adds the `q_<dim>_vec` column dynamically in `create_idx`, and that shared record layout keeps retrieval simple while still tying the data to the model family that created it.
 
 `rag/llm/rerank_model.py` uses the same registry pattern as the embedding layer, yet it solves a different problem. A rerank model scores query and chunk pairs, then normalizes the result to a common `0..1` scale so the retrieval blend can compare providers fairly. It does not persist vectors; it helps search sort candidates after the embedding layer has already done the heavy lifting. For the retrieval side of that handoff, see [01 anatomy of a query](./01-anatomy-of-query.md).
 
