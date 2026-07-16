@@ -27,7 +27,7 @@ The pipeline keeps the geometry instead of flattening it away. That choice adds 
 
 RAGFlow owns DeepDoc as the default path, but `rag/app/naive.py` also routes datasets to other backends when the dataset config asks for them. The backend list currently includes `mineru`, `docling`, `opendataloader`, `tcadp parser`, `paddleocr`, `somark`, and `plaintext`, with `deepdoc` as the default branch. The app keeps the split simple: use DeepDoc when the default parser path fits, switch to another backend when the dataset needs a different extraction strategy, and then hand the result to the same merge and tokenization flow.
 
-The shared wrapper layer in `rag/llm/cv_model.py` exists because several of those paths need the same computer vision and vision-language model interface. It lets image description and figure enrichment reuse one model abstraction instead of scattering provider specific code across parsers. As of July 2026, the backend list in `rag/app/naive.py` keeps growing, but the architectural choice stays the same.
+The shared wrapper layer in `rag/llm/cv_model.py` exists because several of those paths need the same computer vision and vision-language model interface. It lets image description and figure enrichment reuse one model abstraction instead of scattering provider specific code across parsers. As of July 2026, the backend list in `rag/app/naive.py` keeps growing. The architectural choice stays the same.
 
 ## What DeepDoc consumes and what it feeds
 
