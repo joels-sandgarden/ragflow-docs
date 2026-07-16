@@ -1,6 +1,6 @@
 # Anatomy of a Query
 
-This page traces one chat question through the Python stack, from the first user message to the final cited answer. `api/db/services/dialog_service.py` owns the main flow, while the surrounding layers split model resolution, question shaping, retrieval, reranking, prompt building, and citation cleanup into separate joints. That separation lets the system swap models and backends without rewriting the whole path.
+This page traces one chat question through the Python stack, from the first user message to the final cited answer. `api/db/services/dialog_service.py` owns the main flow, while the surrounding layers split model resolution, question shaping, retrieval, reranking, prompt building, and citation cleanup into separate joints. That separation lets the system swap model providers and storage backends without rewriting the path.
 
 ## Series map
 
@@ -16,11 +16,11 @@ This page traces one chat question through the Python stack, from the first user
 
 ## Call path and configuration boundary
 
-The normal query path starts in `async_chat(...)`. `async_chat_solo(...)` only takes over when the dialog has no knowledge base and no web search branch opens, so the fallback stays narrow and predictable. Before retrieval starts, `get_models(...)` loads the selected KBs with `KnowledgebaseService.get_by_ids(...)`, checks them with `validate_dataset_embedding_models(...)`, and then resolves the chat, embedding, rerank, and TTS bundles through the tenant model helpers. The chat tenant still owns the chat and rerank configuration, but the embedding model comes from the KB owner tenant, which keeps the KB inside its own vector space even when another tenant asks the question.
+The normal query path starts in `async_chat(...)`. `async_chat_solo(...)` only takes over when the dialog has no knowledge base and no web search branch opens, so the fallback stays narrow and predictable. Before retrieval starts, `get_models(...)` loads the selected knowledge bases with `KnowledgebaseService.get_by_ids(...)`, checks them with `validate_dataset_embedding_models(...)`, and then resolves the chat, embedding, rerank, and TTS bundles through the tenant model helpers. The chat tenant still owns the chat and rerank configuration, but the embedding model comes from the knowledge base owner tenant, which keeps the knowledge base inside its own vector space even when another tenant asks the question.
 
 ## Question shaping before retrieval
 
-`full_question(...)` condenses recent turns into one question when the dialog asks for multi turn refinement. `cross_languages(...)` rewrites the question into the requested languages, and `keyword_extraction(...)` can append extra terms before `FulltextQueryer.question(...)` turns the string into a query object. The cross language term links to the glossary at [docs/references/glossary.mdx](docs/references/glossary.mdx).
+`full_question(...)` condenses recent turns into one question when the dialog asks for multi turn refinement. `cross_languages(...)` rewrites the question into the requested languages, and `keyword_extraction(...)` can append extra terms before `FulltextQueryer.question(...)` turns the string into a query object. The cross language search term links to the glossary at [docs/references/glossary.mdx](docs/references/glossary.mdx).
 
 The English branch treats the query as a weighted lexical search. It tokenizes the text, expands synonyms, and adds phrase boosts before it returns `MatchTextExpr(...)`. The Chinese branch splits on token boundaries, adds fine grained tokens, and still emits `MatchTextExpr(...)`, but it carries `minimum_should_match` so the backend can keep the intent intact. `Dealer.search(...)` starts with `minimum_should_match` at `0.3`, then drops to `0.1` when the first hybrid pass returns nothing and the dialog does not already pin the search to a specific document.
 
@@ -34,7 +34,7 @@ The English branch treats the query as a weighted lexical search. It tokenizes t
 
 ## From chunks to prompt context
 
-`kb_prompt(kbinfos, max_tokens)` turns each retrieved chunk into a labeled block and stops before the prompt overruns its budget. The sibling `async_ask` path uses `ASK_SUMMARY` as the compact wrapper around the same retrieval and citation machinery, so ask mode keeps the same ground truth but trims the surface form. `message_fit_in(...)` trims the conversation to `0.95 * max_tokens`, and `async_chat` then clamps `gen_conf["max_tokens"]` against the remaining room before it calls the model. The citation prompt joins the system message only when quoting stays on.
+`kb_prompt(kbinfos, max_tokens)` turns each retrieved chunk into a labeled block and stops before the prompt overruns its budget. The sibling `async_ask` path uses `ASK_SUMMARY` as the compact wrapper around the same retrieval and citation machinery, so ask mode keeps the same retrieval evidence but trims the surface form. `message_fit_in(...)` trims the conversation to `0.95 * max_tokens`, and `async_chat` then clamps `gen_conf["max_tokens"]` against the remaining room before it calls the model. The citation prompt joins the system message only when quoting stays on.
 
 ## Citations and repair
 
@@ -42,11 +42,11 @@ The English branch treats the query as a weighted lexical search. It tokenizes t
 
 ## Escape hatches
 
-SQL gives the system a direct route for table shaped knowledge bases. `KnowledgebaseService.get_field_map(...)` supplies the schema, and `use_sql(...)` uses it to generate engine specific SQL before the flow falls back to chunk retrieval.
+SQL gives the system a direct route for table shaped datasets. `KnowledgebaseService.get_field_map(...)` supplies the schema, and `use_sql(...)` uses it to generate engine specific SQL before the flow falls back to chunk retrieval.
 
 `retrieval_by_toc(...)` adds section aware context from the strongest document, while `retrieval_by_children(...)` rebuilds parent chunks from their children when the first pass returns fragments. Both steps refine the same initial candidate set instead of starting a separate search.
 
-When `prompt_config.get("use_kg")` turns on, `async_chat` asks the graph retriever for an extra chunk and prepends it to the KB context; [05 graphrag](./05-graphrag.md) covers that branch in more detail. The web search gate stays a fallback boundary: `tavily_api_key` plus an explicit `internet` flag only extends the answer path when the main KB flow already runs.
+When `prompt_config.get("use_kg")` turns on, `async_chat` asks the graph retriever for an extra chunk and prepends it to the knowledge base context; [05 graphrag](./05-graphrag.md) covers that branch in more detail. The web search gate stays a fallback boundary: `tavily_api_key` plus an explicit `internet` flag only extends the answer path when the main knowledge base flow already runs.
 
 ```mermaid
 sequenceDiagram
