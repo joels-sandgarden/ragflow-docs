@@ -1,6 +1,6 @@
 # DeepDoc: the document understanding layer
 
-DeepDoc turns PDFs and other document formats into ordered sections and table artifacts that downstream chunking can consume. The package README in `deepdoc/README.md` carries the command examples and model notes; this page focuses on the mental model that ties the parser, vision, and figure paths together.
+DeepDoc turns PDFs and other document formats into ordered sections and table artifacts that downstream chunking can consume. In the ingestion path, the worker hands DeepDoc raw files pulled from object storage, so the parser sees the file after upload but before chunk templates slice it into retrieval-sized pieces. The package README in `deepdoc/README.md` carries the command examples and model notes; this page focuses on the mental model that ties the parser, vision, and figure paths together.
 
 If the ingestion path needs a broader context, see [Anatomy of ingestion](./02-anatomy-of-ingestion.md) and [the chunking template zoo](./03-the-chunking-template-zoo.md). Those pages cover the surrounding flow, while this page stays inside the document understanding layer.
 
