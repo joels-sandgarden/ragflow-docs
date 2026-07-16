@@ -36,9 +36,9 @@ This dual form matters. Raw text keeps retrieval, embedding, and display faithfu
 
 ## What a chunk becomes
 
-The chunk does not stop as a parser output. `rag/svr/task_executor.py` adds document identity, timestamps, and knowledge base links, then stores the chunk in the document engine payload that downstream indexing consumes. `content_with_weight` becomes the retrieval facing body, token fields support search, and optional vector, keyword, question, and metadata fields extend the record when the pipeline asks for more than text.
+The chunk record continues into the document engine as a retrieval document. `rag/svr/task_executor.py` adds document identity, timestamps, and knowledge base links, then hands the payload to downstream indexing. `content_with_weight` carries the retrieval body, token fields support search, and optional vector, keyword, question, and metadata fields extend the record when the pipeline asks for more than text.
 
-The later ingestion path in `rag/flow/pipeline.py` makes that same handoff more explicit. It normalizes the upstream output, adds document and knowledge base fields, assigns positions, and prepares the final payload before indexing. That shape belongs in `./07-the-doc-engine-abstraction.md`; this chapter only needs to show that the chunk record eventually turns into a document engine document, not a temporary parser artifact.
+The later ingestion path in `rag/flow/pipeline.py` makes the handoff explicit. It normalizes the upstream output, adds document and knowledge base fields, assigns positions, and prepares the final payload before indexing. That shape belongs in `./07-the-doc-engine-abstraction.md`; this chapter only needs to show that the chunk record becomes a document engine document, not a temporary parser artifact.
 
 > Note, July 2026: parent child chunking remains a separate layer that sits on top of these templates. The user level walkthrough lives in [/docs/guides/dataset/configure_child_chunking_strategy.md](/docs/guides/dataset/configure_child_chunking_strategy.md).
 
