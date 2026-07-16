@@ -4,7 +4,7 @@
 
 Documents do not arrive as flat text. A paper, a manual, a resume, and an email all carry structure that helps retrieval when the chunker respects it and hurts retrieval when the chunker ignores it. RAGFlow chooses a chunking template from `parser_id`, then dispatches that choice through the canonical `FACTORY` registry in `rag/svr/task_executor.py`.
 
-The official dataset guide lists the available templates in a reference table, but the design question sits one level deeper: why these shapes exist and how they share the same indexing contract. This page treats the 14 templates as a small family of structural strategies instead of a flat configuration list. For the user-facing table, see [/docs/guides/dataset/configure_knowledge_base.md](docs/guides/dataset/configure_knowledge_base.md).
+The official dataset guide lists the available templates in a reference table, but the design question sits one level deeper: why these shapes exist and how they share the same indexing contract. This page treats the 14 templates as a small family of structural strategies instead of a flat configuration list. For the user-facing table, see [/docs/guides/dataset/configure_knowledge_base.md](/docs/guides/dataset/configure_knowledge_base.md).
 
 ## The shared chunk contract
 
@@ -50,7 +50,7 @@ That storage contract matters because it keeps user-visible behavior stable even
 
 ## A dated note on the next path
 
-As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](/docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
+As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
 
 As of July 2026, `rag/flow/` also points past the fixed template zoo. `rag/flow/pipeline.py`, `rag/flow/chunker/token_chunker.py`, and `rag/flow/extractor/extractor.py` let parser, chunker, and extractor components compose as a graph, so the ingestion path can express more than a fixed template choice while still reusing the same chunk contract.
 
