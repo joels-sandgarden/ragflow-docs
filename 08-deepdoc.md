@@ -51,8 +51,8 @@ That contract also explains why the parser package exports `PdfParser` and `Plai
 
 ## Where to look in the code
 
-- `deepdoc/parser/pdf_parser.py` — baseline PDF orchestration, OCR, layout tagging, table assembly, reading order, and figure cropping.
-- `deepdoc/vision/ocr.py` — page image text detection and recognition, plus the fallback that replaces garbled PDF text.
+- `deepdoc/parser/pdf_parser.py` — baseline PDF orchestration, OCR fallback for garbled PDF text, layout tagging, table assembly, reading order, and figure cropping.
+- `deepdoc/vision/ocr.py` — page image text detection and recognition.
 - `deepdoc/vision/layout_recognizer.py` — layout labels, page-level tagging, and the `LayoutRecognizer4YOLOv10` path.
 - `deepdoc/vision/table_structure_recognizer.py` — table labels, span recovery, and the HTML or prose table reconstruction logic.
 - `deepdoc/parser/figure_parser.py` — vision LLM enrichment for figures and image blocks.
