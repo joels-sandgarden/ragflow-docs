@@ -39,7 +39,7 @@ Canvas keeps globals for the active conversation: `sys.query`, `sys.user_id`, `s
 
 ## Tools and components
 
-Components schedule graph work; tools extend an LLM powered component after the scheduler picks a node. `Agent` in `agent/component/agent_with_tools.py` turns configured tool definitions into indexed tool names, binds them to `LLMBundle`, and adds MCP tools through the `mcp/` package when the canvas config includes them. Retrieval bridges back into the RAG retrieval stack and knowledge bases, so `Agent` can ground answers in indexed content rather than freeform guesses. See [Anatomy of a Query](/01-anatomy-of-a-query.md) for the retrieval path behind that bridge. Code execution uses the sandbox backend in `agent/sandbox/README.md`, which keeps host impact bounded while still allowing scripted work.
+Components schedule graph work; tools extend an LLM powered component after the scheduler picks a node. `Agent` in `agent/component/agent_with_tools.py` turns configured tool definitions into indexed tool names, binds them to `LLMBundle`, and uses `common/mcp_tool_call_conn.py` plus `api/db/services/mcp_server_service.py` to bind MCP tools when the canvas config includes them. Retrieval bridges back into the RAG retrieval stack and knowledge bases, so `Agent` can ground answers in indexed content rather than freeform guesses. See [Anatomy of a Query](/01-anatomy-of-a-query.md) for the retrieval path behind that bridge. Code execution uses the sandbox backend in `agent/sandbox/README.md`, which keeps host impact bounded while still allowing scripted work.
 
 ## Mermaid diagram
 
