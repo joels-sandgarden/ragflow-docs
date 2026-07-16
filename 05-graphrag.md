@@ -1,15 +1,18 @@
 # GraphRAG
 
-Chunk retrieval works well when the answer lives close to a passage. It falls short when a question spans several hops or asks for a corpus wide theme. GraphRAG closes that gap by extracting an entity relationship graph during ingestion and then using that graph alongside ordinary chunk retrieval at query time.
+Chunk retrieval works well when the answer lives close to a passage. It falls short when a question spans several hops or asks for a corpus-wide theme. GraphRAG closes that gap by extracting an entity-relationship graph during ingestion and then using that graph alongside ordinary chunk retrieval at query time.
 
 ## Series map
 
+- [00 the big picture](./00-the-big-picture.md)
 - [01 anatomy of a query](./01-anatomy-of-a-query.md)
 - [02 anatomy of ingestion](./02-anatomy-of-ingestion.md)
+- [03 the chunking template zoo](./03-the-chunking-template-zoo.md)
 - [04 the embedding layer](./04-the-embedding-layer.md)
 - [06 the canvas orchestrator](./06-the-canvas-orchestrator.md)
 - [07 the doc engine abstraction](./07-the-doc-engine-abstraction.md)
 - [08 deepdoc](./08-deepdoc.md)
+- [09 about this site](./09-about-this-site.md)
 
 ## Why the graph exists
 
@@ -17,9 +20,9 @@ Chunk retrieval favors local evidence. It answers “what does this passage say?
 
 ## Ingestion: an optional expensive pass
 
-`rag/svr/task_executor.py` routes `PipelineTaskType.GRAPH_RAG` into the graph build path, so the subsystem runs only when the pipeline asks for it. `rag/graphrag/general/index.py` then drives the work in stages: it batches chunks, builds per document subgraphs, merges them into a global graph, optionally resolves duplicate entities, optionally generates community reports, and persists the graph artifacts back into the doc store.
+`rag/svr/task_executor.py` routes `PipelineTaskType.GRAPH_RAG` into the graph build path, so the subsystem runs only when the pipeline asks for it. `rag/graphrag/general/index.py` then drives the work in stages: it batches chunks, builds per-document subgraphs, merges them into a global graph, optionally resolves duplicate entities, optionally generates community reports, and persists the graph artifacts back into the doc store.
 
-That path stays resumable. `rag/graphrag/phase_markers.py` and the orchestration code in `rag/graphrag/general/index.py` track KB scoped phase markers and use locks so reruns can skip work that already finished. The result keeps retries from repeating the most expensive phases.
+That path stays resumable. `rag/graphrag/phase_markers.py` and the orchestration code in `rag/graphrag/general/index.py` track KB-scoped phase markers and use locks so reruns can skip work that already finished. The result keeps retries from repeating the most expensive phases.
 
 ### Extraction strategy: richer GraphRAG prompts or lighter LightRAG prompts
 
@@ -27,7 +30,7 @@ The shared extraction framework in `rag/graphrag/general/extractor.py` feeds two
 
 ### Entity resolution: merge the duplicates
 
-Extraction often creates near duplicate nodes for the same real world entity. If the build path leaves them separate, the graph fragments one concept into several nodes and weakens both traversal and scoring. `rag/graphrag/entity_resolution.py` addresses that problem with an LLM assisted yes or no equivalence pass from `rag/graphrag/entity_resolution_prompt.py`: it batches candidate pairs, checkpoints progress, merges nodes and edges by connected components, and recomputes PageRank after the merge.
+Extraction often creates near-duplicate nodes for the same real-world entity. If the build path leaves them separate, the graph fragments one concept into several nodes and weakens both traversal and scoring. `rag/graphrag/entity_resolution.py` addresses that problem with an LLM-assisted yes-or-no equivalence pass from `rag/graphrag/entity_resolution_prompt.py`: it batches candidate pairs, checkpoints progress, merges nodes and edges by connected components, and recomputes PageRank after the merge.
 
 ### Communities and community reports
 
@@ -39,13 +42,13 @@ Extraction often creates near duplicate nodes for the same real world entity. If
 
 ## Query time: graph retrieval joins the normal dealer flow
 
-`rag/graphrag/search.py` defines `KGSearch`, which extends the ordinary `Dealer` flow from `rag/nlp/search.py` instead of replacing it. `rag/graphrag/query_analyze_prompt.py` first rewrites the question into answer type keywords and entity hints. `KGSearch` then finds candidate entities through keyword and embedding signals, finds relation candidates through text embeddings, expands N hop paths from stored entity neighborhoods, and pulls in community reports.
+`rag/graphrag/search.py` defines `KGSearch`, which extends the ordinary `Dealer` flow from `rag/nlp/search.py` instead of replacing it. `rag/graphrag/query_analyze_prompt.py` first rewrites the question into answer-type keywords and entity hints. `KGSearch` then finds candidate entities through keyword and embedding signals, finds relation candidates through text embeddings, expands N-hop paths from stored entity neighborhoods, and pulls in community reports.
 
-PageRank weighted scoring and similarity scoring rank the graph evidence. The retriever then returns a chunk shaped bundle, so the downstream chat assembly can treat graph hits the same way it treats ordinary chunk hits.
+PageRank-weighted scoring and similarity scoring rank the graph evidence. The retriever then returns a chunk-shaped bundle, so the downstream chat assembly can treat graph hits the same way it treats ordinary chunk hits.
 
 ## Cost and trade offs
 
-Graph construction multiplies ingestion LLM spend because the pipeline may run extraction prompts, entity resolution, community reporting, and embeddings before it writes the graph back to storage. That cost buys broader recall for relationship and corpus wide questions, so GraphRAG makes sense as an optional path rather than a default one. For the configuration oriented walkthrough and the retrieval test page, see the official guides for [construct knowledge graph](https://ragflow.io/docs/dev/construct_knowledge_graph) and [run retrieval test](https://ragflow.io/docs/dev/run_retrieval_test).
+Graph construction multiplies ingestion LLM spend because the pipeline may run extraction prompts, entity resolution, community reporting, and embeddings before it writes the graph back to storage. That cost buys broader recall for relationship and corpus-wide questions, so GraphRAG makes sense as an optional path rather than a default one. For the configuration-oriented walkthrough and the retrieval test page, see the official guides for [construct knowledge graph](https://ragflow.io/docs/dev/construct_knowledge_graph) and [run retrieval test](https://ragflow.io/docs/dev/run_retrieval_test).
 
 For broader ingestion context, see [02 anatomy of ingestion](./02-anatomy-of-ingestion.md).
 
