@@ -20,13 +20,13 @@ The normal query path starts in `async_chat(...)`. `async_chat_solo(...)` only t
 
 ## Question shaping before retrieval
 
-`full_question(...)` condenses recent turns into one question when the dialog asks for multi turn refinement. `cross_languages(...)` rewrites the question into the requested languages, and `keyword_extraction(...)` can append extra terms before `FulltextQueryer.question(...)` turns the string into a query object. The cross language search term links to the glossary at [docs/references/glossary.mdx](docs/references/glossary.mdx).
+`full_question(...)` condenses recent turns into one question when the dialog asks for multi-turn refinement. `cross_languages(...)` rewrites the question into the requested languages, and `keyword_extraction(...)` can append extra terms before `FulltextQueryer.question(...)` turns the string into a query object. The cross-language search term links to the glossary at [docs/references/glossary.mdx](docs/references/glossary.mdx).
 
-The English branch treats the query as a weighted lexical search. It tokenizes the text, expands synonyms, and adds phrase boosts before it returns `MatchTextExpr(...)`. The Chinese branch splits on token boundaries, adds fine grained tokens, and still emits `MatchTextExpr(...)`, but it carries `minimum_should_match` so the backend can keep the intent intact. `Dealer.search(...)` starts with `minimum_should_match` at `0.3`, then drops to `0.1` when the first hybrid pass returns nothing and the dialog does not already pin the search to a specific document.
+The English branch treats the query as a weighted lexical search. It tokenizes the text, expands synonyms, and adds phrase boosts before it returns `MatchTextExpr(...)`. The Chinese branch splits on token boundaries, adds fine-grained tokens, and still emits `MatchTextExpr(...)`, but it carries `minimum_should_match` so the backend can keep the intent intact. `Dealer.search(...)` starts with `minimum_should_match` at `0.3`, then drops to `0.1` when the first hybrid pass returns nothing and the dialog does not already pin the search to a specific document.
 
 ## Hybrid search as two legs
 
-`common/doc_store/doc_store_base.py` defines the query language that keeps retrieval portable: `MatchTextExpr`, `MatchDenseExpr`, and `FusionExpr` describe intent, not storage syntax. `Dealer.search(...)` builds one full text leg and one dense leg, then joins them with `FusionExpr("weighted_sum", topk, {"weights": "0.05,0.95"})` so dense retrieval carries most of the weight. `internal/engine/infinity/chunk.go` consumes the same objects and applies engine side fusion with `normalize: atan`; ES and OceanBase follow the same shape for different reasons, since one keeps vectors in the index and the other still leans on local rerank against chunk vectors.
+`common/doc_store/doc_store_base.py` defines the query language that keeps retrieval portable: `MatchTextExpr`, `MatchDenseExpr`, and `FusionExpr` describe intent, not storage syntax. `Dealer.search(...)` builds one full-text leg and one dense leg, then joins them with `FusionExpr("weighted_sum", topk, {"weights": "0.05,0.95"})` so dense retrieval carries most of the weight. `internal/engine/infinity/chunk.go` consumes the same objects and applies engine-side fusion with `normalize: atan`; ES and OceanBase follow the same shape for different reasons, since one keeps vectors in the index and the other still leans on local rerank against chunk vectors.
 
 ## Reranking and normalization
 
@@ -42,11 +42,11 @@ The English branch treats the query as a weighted lexical search. It tokenizes t
 
 ## Escape hatches
 
-SQL gives the system a direct route for table shaped datasets. `KnowledgebaseService.get_field_map(...)` supplies the schema, and `use_sql(...)` uses it to generate engine specific SQL before the flow falls back to chunk retrieval.
+SQL gives the system a direct route for table-shaped datasets. `KnowledgebaseService.get_field_map(...)` supplies the schema, and `use_sql(...)` uses it to generate engine-specific SQL before the flow falls back to chunk retrieval.
 
-`retrieval_by_toc(...)` adds section aware context from the strongest document, while `retrieval_by_children(...)` rebuilds parent chunks from their children when the first pass returns fragments. Both steps refine the same initial candidate set instead of starting a separate search.
+`retrieval_by_toc(...)` adds section-aware context from the strongest document, while `retrieval_by_children(...)` rebuilds parent chunks from their children when the first pass returns fragments. Both steps refine the same initial candidate set instead of starting a separate search.
 
-When `prompt_config.get("use_kg")` turns on, `async_chat` asks the graph retriever for an extra chunk and prepends it to the knowledge base context; [05 graphrag](./05-graphrag.md) covers that branch in more detail. The web search gate stays a fallback boundary: `tavily_api_key` plus an explicit `internet` flag only extends the answer path when the main knowledge base flow already runs.
+When `prompt_config.get("use_kg")` turns on, `async_chat` asks the graph retriever for an extra chunk and prepends it to the context for that knowledge base; [05 graphrag](./05-graphrag.md) covers that branch in more detail. The web-search gate stays a fallback boundary: `tavily_api_key` plus an explicit `internet` flag only extends the answer path when the main retrieval path already runs.
 
 ```mermaid
 sequenceDiagram
@@ -73,7 +73,7 @@ sequenceDiagram
     Cite-->>User: Final cited answer
 ```
 
-For a hands on retrieval pass, see [docs/guides/dataset/run_retrieval_test.md](docs/guides/dataset/run_retrieval_test.md).
+For a hands-on retrieval pass, see [docs/guides/dataset/run_retrieval_test.md](docs/guides/dataset/run_retrieval_test.md).
 
 ## Where to look in the code
 
