@@ -12,7 +12,7 @@ The official documentation at https://ragflow.io/docs/dev/ remains the authorita
 
 The repository changes actively. When the guide mentions migration work or transitional behavior, those notes describe the state of the code at the time of writing. They do not define the main subject of the guide. Those dated observations keep the guide honest in a live repository, but they stay secondary to the architecture story.
 
-This guide names the load-bearing paths and the decisions that shape them, then leaves detailed operation to the official material. Each chapter starts with the subsystem's purpose and ends with a short map of the code paths that carry that idea. The series map below follows the same progression from the broad system view through query flow, ingestion, chunking, embeddings, graph retrieval, canvas orchestration, document engines, and DeepDoc. That order lets a reader move from context to detail without losing the thread. It also keeps the closing page concise, so the table of contents carries the navigation load.
+This guide names the load-bearing paths and the decisions that shape them, then leaves detailed operation to the official material. Each chapter starts with the subsystem's purpose and ends with a short map of the code paths that carry that idea. The series map below follows the same progression from the broad system view through query flow, ingestion, chunking, embeddings, graph retrieval, canvas orchestration, document engines, and DeepDoc. That order helps a reader move from context to detail without losing the thread. It also keeps the closing page concise, so the table of contents carries the navigation load.
 
 Corrections or repository links: [CONTACT_OR_REPO_LINK placeholder for the operator]
 
