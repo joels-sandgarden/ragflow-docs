@@ -27,7 +27,7 @@ The catalog in that file includes providers such as `OpenAIEmbed`, `QWenEmbed`, 
 
 ## How a dataset chooses its model
 
-The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService` reads that field back, and the ingestion worker resolves it through `tenant_llm_service.py` and `llm_service.py` when it prepares a task. The call chain runs from the `KnowledgebaseService` record to tenant-scoped model config, then to `TenantLLMService.model_instance()`, and finally to `LLMBundle`, which resolves the concrete embedding class at call time.
+The dataset row carries the embedding choice in `embd_id`. `KnowledgebaseService` reads that field back, and the ingestion worker resolves it through `tenant_llm_service.py` and `llm_service.py` when it prepares a task. The call chain runs from the `KnowledgebaseService` record to tenant-scoped model config, then to `LLMBundle`, which calls `TenantLLMService.model_instance()` during construction to resolve the concrete embedding class.
 
 That design matters because the same tenant can own several model families, but a dataset still needs one clear default. The knowledge base configuration guide at [ragflow.io/docs/dev/configure_knowledge_base](https://ragflow.io/docs/dev/configure_knowledge_base) covers the UI step that writes the dataset model choice; the runtime path later uses the stored value instead of asking for a fresh selection on every parse.
 
@@ -35,7 +35,7 @@ A newer per-instance model configuration layer lives in `api/db/joint_services/t
 
 ## Why the choice stays pinned
 
-The doc engine stores vectors in fields whose names encode the vector size, such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. The mapping files keep those vectors beside the chunk text in the same record, so the engine treats embedding shape as part of the stored document, not as an afterthought. That makes one dataset depend on one embedding dimensionality and, by extension, one embedding family at a time.
+The doc engine stores vectors in fields whose names encode the vector size, such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. `conf/mapping.json` keeps those vectors beside the chunk text in the same record, and Infinity adds the `q_<dim>_vec` column dynamically in `create_idx`, so the engine treats embedding shape as part of the stored document, not as an afterthought. That makes one dataset depend on one embedding dimensionality and, by extension, one embedding family at a time.
 
 `rag/svr/task_executor.py` makes that dependency explicit. `do_handle_task` binds the embedding model, probes it to learn `vector_size`, passes that size into `init_kb`, and then uses the same size for every chunk it stores in that ingestion run. When the embedding model changes, the stored chunks no longer match the field the engine expects, so the dataset needs a fresh parse and fresh vectors. Re-embedding does not just improve quality; it rebuilds the storage shape that retrieval depends on.
 
@@ -45,19 +45,19 @@ The doc engine stores vectors in fields whose names encode the vector size, such
 
 The query-time path mirrors that shape. `rag/nlp/search.py` sends the question through `Dealer.get_vector()`, which calls `encode_queries()`, converts the result into a `q_<dim>_vec` lookup, and feeds that into the retrieval query. The same dimension that the model returned at ingestion now decides which vector field retrieval reads at search time.
 
-RAPTOR uses the same stored vectors and skips chunks that lack the expected vector field, which keeps older parses from breaking the graph build. GraphRAG follows a separate side path in `rag/graphrag/general/entity_embedding.py`, where node embeddings support graph-specific work rather than the document index itself. For that branch of the system, see [05 graphrag](./05-graphrag.md).
+RAPTOR uses the same stored vectors and skips chunks that lack the expected vector field, which keeps older parses from breaking the summary tree build. GraphRAG follows a separate side path in `rag/graphrag/utils.py`, where `graph_node_to_chunk` and `graph_edge_to_chunk` produce the vectors that vector search uses; `rag/graphrag/general/entity_embedding.py` is just an unused node2vec utility. For that branch of the system, see [05 graphrag](./05-graphrag.md).
 
 ## Storage and reranking
 
-The vector lives beside the chunk text in the doc engine record, not in a separate vector store. `conf/mapping.json` and `conf/infinity_mapping.json` show that pairing clearly: the text fields and the `q_<dim>_vec` fields travel together inside the same chunk. That shared record layout keeps retrieval simple, but it also locks the data to the model family that created it.
+The vector lives beside the chunk text in the doc engine record, not in a separate vector store. `conf/mapping.json` shows that pairing clearly: the text fields and the `q_<dim>_vec` fields travel together inside the same chunk. Infinity adds the `q_<dim>_vec` column dynamically in `create_idx`, and that shared record layout keeps retrieval simple while still tying the data to the model family that created it.
 
 `rag/llm/rerank_model.py` uses the same registry pattern as the embedding layer, yet it solves a different problem. A rerank model scores query and chunk pairs, then normalizes the result to a common `0..1` scale so the retrieval blend can compare providers fairly. It does not persist vectors; it helps search sort candidates after the embedding layer has already done the heavy lifting. For the retrieval side of that handoff, see [01 anatomy of a query](./01-anatomy-of-query.md).
 
 ## Where to look in the code
 
 - `rag/llm/embedding_model.py` and `rag/llm/__init__.py` — shared embedding base, provider registry, batching, and error handling.
-- `api/db/services/knowledgebase_service.py`, `api/db/services/tenant_llm_service.py`, and `api/db/services/llm_service.py` — dataset defaults, runtime resolution, and `LLMBundle`.
+- `api/db/services/knowledgebase_service.py`, `api/db/services/llm_service.py`, and `api/db/services/tenant_llm_service.py` — dataset defaults, LLMBundle construction, and `TenantLLMService.model_instance()`.
 - `rag/svr/task_executor.py` — vector-size discovery, ingestion embedding, RAPTOR hooks, and re-embedding.
 - `rag/nlp/search.py` — query embedding, `q_<dim>_vec` lookup, and retrieval flow.
-- `conf/mapping.json` and `conf/infinity_mapping.json` — vector fields stored alongside chunk text.
-- `rag/llm/rerank_model.py` and `rag/graphrag/general/entity_embedding.py` — reranking and GraphRAG consumers.
+- `conf/mapping.json` — vector fields stored alongside chunk text; Infinity adds the `q_<dim>_vec` column dynamically in `create_idx`.
+- `rag/llm/rerank_model.py` and `rag/graphrag/general/entity_embedding.py` — reranking and an unused node2vec GraphRAG utility.

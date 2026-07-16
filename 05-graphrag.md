@@ -38,7 +38,7 @@ Extraction often creates near-duplicate nodes for the same real-world entity. If
 
 ### Embeddings and persistence
 
-`rag/graphrag/general/entity_embedding.py` embeds graph entities so vector search can find them. `rag/graphrag/utils.py` persists the finished graph back into the doc store as the global graph, per document subgraphs, entity chunks, relation chunks, and community report chunks. GraphRAG therefore lives in the same retrieval store as ordinary chunks rather than in a separate side index.
+`rag/graphrag/utils.py` embeds graph entities and relations so vector search can find them, and it persists the finished graph back into the doc store as the global graph, per document subgraphs, entity chunks, and relation chunks. `rag/graphrag/general/entity_embedding.py` is just an unused node2vec utility. GraphRAG therefore lives in the same retrieval store as ordinary chunks rather than in a separate side index.
 
 ## Query time: graph retrieval joins the normal dealer flow
 
@@ -60,8 +60,8 @@ For broader ingestion context, see [02 anatomy of ingestion](./02-anatomy-of-ing
 ## Where to look in the code
 
 - `rag/svr/task_executor.py` — task routing for graph build and mind map runs.
-- `rag/graphrag/general/index.py` — chunk batching, subgraph merge, optional resolution, community extraction, and persistence.
+- `rag/graphrag/general/index.py` — chunk batching, subgraph merge, optional resolution, community extraction, and community report persistence.
 - `rag/graphrag/phase_markers.py` — KB scoped markers that let reruns skip finished graph phases.
 - `rag/graphrag/search.py` — query time graph retrieval and chunk-shaped output.
-- `rag/graphrag/utils.py` — graph serialization and doc store persistence for subgraphs, entities, relations, and reports.
+- `rag/graphrag/utils.py` — graph serialization and doc store persistence for subgraphs, entities, and relations.
 - `rag/nlp/search.py` — the normal Dealer retrieval contract that GraphRAG plugs into.
