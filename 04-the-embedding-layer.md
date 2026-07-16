@@ -9,10 +9,14 @@ The embedding layer turns chunks and questions into vectors that the doc engine 
 
 ## Series map
 
+- [00 the big picture](./00-the-big-picture.md)
 - [01 anatomy of a query](./01-anatomy-of-query.md)
+- [02 anatomy of ingestion](./02-anatomy-of-ingestion.md)
+- [03 the chunking template zoo](./03-the-chunking-template-zoo.md)
 - [05 graphrag](./05-graphrag.md)
 - [06 the canvas orchestrator](./06-the-canvas-orchestrator.md)
 - [07 the doc engine abstraction](./07-the-doc-engine-abstraction.md)
+- [08 deepdoc](./08-deepdoc.md)
 - [09 about this site](./09-about-this-site.md)
 
 ## What the embedding layer does
