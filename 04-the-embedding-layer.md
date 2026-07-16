@@ -51,10 +51,8 @@ The vector lives beside the chunk text in the doc engine record, not in a separa
 
 ## Where to look in the code
 
-- `rag/llm/embedding_model.py` — shared embedding base, batch helper, truncation limits, and provider error handling.
-- `rag/llm/__init__.py` — dynamic provider registry for embedding and rerank models.
-- `api/db/services/knowledgebase_service.py` — dataset records and stored `embd_id` values.
-- `api/db/services/tenant_llm_service.py` and `api/db/services/llm_service.py` — runtime model resolution and `LLMBundle`.
+- `rag/llm/embedding_model.py` and `rag/llm/__init__.py` — shared embedding base, provider registry, batching, and error handling.
+- `api/db/services/knowledgebase_service.py`, `api/db/services/tenant_llm_service.py`, and `api/db/services/llm_service.py` — dataset defaults, runtime resolution, and `LLMBundle`.
 - `rag/svr/task_executor.py` — vector-size discovery, ingestion embedding, RAPTOR hooks, and re-embedding.
 - `rag/nlp/search.py` — query embedding, `q_<dim>_vec` lookup, and retrieval flow.
 - `conf/mapping.json` and `conf/infinity_mapping.json` — vector fields stored alongside chunk text.
