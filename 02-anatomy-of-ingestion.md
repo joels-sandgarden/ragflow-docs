@@ -42,7 +42,7 @@ flowchart LR
 
 ## The worker: one long running orchestrator
 
-`rag/svr/task_executor.py` runs as a standalone async process. `collect()` pulls the next message from the stream, and `do_handle_task()` routes the task into the right branch. The live worker handles standard parsing, RAPTOR, GraphRAG, Mindmap, memory, and dataflow work. The wider task family also names artifact and skill work, which keeps the queue model broader than plain parsing. GraphRAG follows the knowledge graph path described in [/05-graphrag.md](/05-graphrag.md), while the rest of this page stays focused on ingestion rather than downstream retrieval.
+`rag/svr/task_executor.py` runs as a standalone async process. `collect()` pulls the next message from the stream, and `do_handle_task()` routes the task into the right branch. The live worker handles standard parsing, RAPTOR, GraphRAG, Mindmap, memory, and dataflow work. The broader task family also names artifact and skill work, which keeps the queue model broader than plain parsing. GraphRAG follows the knowledge graph path described in [/05-graphrag.md](/05-graphrag.md), while the rest of this page stays focused on ingestion rather than downstream retrieval.
 
 ## Parse and chunk: choose the parser, then build chunks
 
@@ -52,7 +52,7 @@ flowchart LR
 
 After chunking, the worker can layer extra signal onto each chunk: auto keywords, auto questions, metadata, tag assignment, and table of contents or PageIndex extraction. These layers do not replace the original chunks; they widen the search surface and give the retrieval stack more ways to land on the right answer.
 
-RAPTOR adds a second structure on top of that base. The worker clusters related chunks, summarizes each cluster, and repeats that process on the summaries to build a tree of higher level chunks. The leaf chunks still matter, but the tree gives the system broader context for multi hop retrieval. The same pass can run at file scope or dataset scope, depending on configuration, so one dataset can keep the summary tree narrow or make it shared across files.
+RAPTOR adds a second structure on top of that base. The worker clusters related chunks, summarizes each cluster, and repeats that process on the summaries to build a tree of higher level chunks. The leaf chunks still matter, but the tree gives the system broader context for multi-hop retrieval. The same pass can run at file scope or dataset scope, depending on configuration, so one dataset can keep the summary tree narrow or make it shared across files.
 
 ## Embed and index: pin the model, size the index, write the rows
 
