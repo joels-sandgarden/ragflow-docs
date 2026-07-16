@@ -8,7 +8,7 @@ RAGFlow Canvas turns a visual workflow into a JSON DSL. The frontend edits that 
 
 ## Mental model
 
-The stored workflow record lives in `api/db/db_models.py` as `UserCanvas`. The runtime reads the DSL from that record, and `Canvas` extends `Graph` so one object can hold the in memory graph, the current path, history, retrieval results, globals, and runtime variables.
+The stored workflow record lives in `api/db/db_models.py` as `UserCanvas`. The runtime reads the DSL from that record, and `Canvas` extends `Graph` so one object can hold the graph in memory, the current path, history, retrieval results, globals, and runtime variables.
 
 Canvas does not treat the DSL as static text. It turns each node into a component object from `agent/component/`, then walks the path list as a live schedule. The editor decides what to author; the runtime decides what to execute.
 
@@ -18,10 +18,10 @@ Canvas does not treat the DSL as static text. It turns each node into a componen
 
 ### Component families
 
-- Control flow: `categorize`, `switch`, `iteration`, `loop`, `exit_loop`. These nodes choose the next branch or re enter the body until the stop condition fires.
+- Control flow: `categorize`, `switch`, `iteration`, `loop`, `exit_loop`. These nodes choose the next branch or enter the body again until the stop condition fires.
 - Model work: `llm`, `agent_with_tools`. These nodes build prompts, call the model, and let an agent use tools mid turn.
 - Data shaping: `string_transform`, `data_operations`, `list_operations`, `variable_aggregator`. These nodes reshape text, objects, lists, and grouped variables.
-- I O: `begin`, `message`, `fillup`, `invoke`, `browser`. These nodes seed inputs, stream output, call HTTP endpoints, and drive browser tasks.
+- I/O: `begin`, `message`, `fillup`, `invoke`, `browser`. These nodes seed inputs, stream output, call HTTP endpoints, and drive browser tasks.
 
 ## Execution model
 
@@ -33,13 +33,13 @@ The scheduler skips a node when its upstream value still lives outside the curre
 
 ## State and data flow
 
-Canvas keeps conversation scoped globals for `sys.query`, `sys.user_id`, `sys.conversation_turns`, `sys.files`, `sys.history`, and `sys.date`. The runtime updates `sys.date` at run start, increments `sys.conversation_turns`, and appends each user turn to `sys.history`. Any `env.*` entry comes from the DSL `variables` table; the runtime refreshes those values from the saved variable definitions and falls back to a type based empty value when the DSL supplies no explicit value.
+Canvas keeps globals for the active conversation: `sys.query`, `sys.user_id`, `sys.conversation_turns`, `sys.files`, `sys.history`, and `sys.date`. The runtime updates `sys.date` at run start, increments `sys.conversation_turns`, and appends each user turn to `sys.history`. Any `env.*` entry comes from the DSL `variables` table; the runtime refreshes those values from the saved variable definitions and falls back to an empty value that matches the declared type when the DSL supplies no explicit value.
 
 `ComponentBase` resolves `{component_id@field}` references directly against component outputs, and it also resolves iteration aliases `item`, `index`, and `result` to the paired `IterationItem` outputs. `Begin` in `Webhook` mode turns a payload into runtime inputs by copying `input` into the `request` field and writing the remaining payload fields to outputs, which lets the canvas act like an API endpoint.
 
 ## Tools and components
 
-Components schedule graph work; tools extend an LLM backed component after the scheduler picks a node. `Agent` in `agent/component/agent_with_tools.py` turns configured tool definitions into indexed tool names, binds them to `LLMBundle`, and adds MCP tools through the `mcp/` package when the canvas config includes them. Retrieval bridges back into the RAG retrieval stack and knowledge bases, so `Agent` can ground answers in indexed content rather than freeform guesses. See [Anatomy of a Query](/01-anatomy-of-a-query.md) for the retrieval path behind that bridge. Code execution uses the sandbox backend in `agent/sandbox/README.md`, which keeps host impact bounded while still allowing scripted work.
+Components schedule graph work; tools extend an LLM powered component after the scheduler picks a node. `Agent` in `agent/component/agent_with_tools.py` turns configured tool definitions into indexed tool names, binds them to `LLMBundle`, and adds MCP tools through the `mcp/` package when the canvas config includes them. Retrieval bridges back into the RAG retrieval stack and knowledge bases, so `Agent` can ground answers in indexed content rather than freeform guesses. See [Anatomy of a Query](/01-anatomy-of-a-query.md) for the retrieval path behind that bridge. Code execution uses the sandbox backend in `agent/sandbox/README.md`, which keeps host impact bounded while still allowing scripted work.
 
 ## Mermaid diagram
 
