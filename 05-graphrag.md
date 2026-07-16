@@ -60,8 +60,8 @@ For broader ingestion context, see [02 anatomy of ingestion](./02-anatomy-of-ing
 ## Where to look in the code
 
 - `rag/svr/task_executor.py` — task routing for graph build and mind map runs.
-- `rag/graphrag/general/index.py` — chunk batching, subgraph merge, optional resolution, community extraction, and persistence.
+- `rag/graphrag/general/index.py` — chunk batching, subgraph merge, optional resolution, community extraction, and community report persistence.
 - `rag/graphrag/phase_markers.py` — KB scoped markers that let reruns skip finished graph phases.
 - `rag/graphrag/search.py` — query time graph retrieval and chunk-shaped output.
-- `rag/graphrag/utils.py` — graph serialization and doc store persistence for subgraphs, entities, relations, and reports.
+- `rag/graphrag/utils.py` — graph serialization and doc store persistence for subgraphs, entities, and relations.
 - `rag/nlp/search.py` — the normal Dealer retrieval contract that GraphRAG plugs into.
