@@ -5,7 +5,7 @@ slug: /04-the-embedding-layer
 
 # The Embedding Layer
 
-The embedding layer turns chunks and questions into vectors that the doc engine can compare quickly. It sits between model selection and retrieval, so the rest of the app uses one shared abstraction instead of calling providers directly. RAGFlow hides roughly 45 embedding providers behind that interface, so the ingestion path and search path stay aligned even when providers expose different limits, batching rules, or output formats.
+The embedding layer turns chunks and questions into vectors that the doc engine can compare quickly. It sits between model selection and retrieval, so the rest of the app uses one shared abstraction instead of calling providers directly. RAGFlow hides roughly 45 embedding providers behind one interface, so the app keeps a single path for ingestion and search even when provider limits, batching rules, or output formats differ.
 
 ## Series map
 
