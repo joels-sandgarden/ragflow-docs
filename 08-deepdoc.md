@@ -45,9 +45,9 @@ That difference matters at a conceptual level. The default DeepDoc path extracts
 
 ## How the output reaches chunking
 
-DeepDoc does not stop at recognition. It converts the page into a reading order that downstream chunking can trust. The parser keeps position tags with each box, merges lines when the content and geometry justify it, and leaves tables and figures in separate lanes when they need different handling. The result is not raw OCR output. The result is structured text plus geometry that the ingestion pipeline can slice into chunks with less guesswork.
+DeepDoc does not stop at recognition. It converts the page into a reading order that downstream chunking can trust. The parser keeps position tags with each box, merges lines when the content and geometry justify it, and leaves tables and figures in separate lanes when they need different handling. The result is structured text plus geometry, not raw OCR output.
 
-That contract also explains why the parser package exports `PdfParser` and `PlainParser` alongside the format-specific adapters in `deepdoc/parser/__init__.py`. The package gives ingestion a default path for PDF understanding and a lighter path for simpler text extraction, but both paths still feed the same larger chunking story.
+That contract also explains why the parser package exports `PdfParser` and `PlainParser` alongside the format-specific adapters in `deepdoc/parser/__init__.py`. The package keeps one path tuned for PDF understanding and another path tuned for lighter text extraction, but both still feed the same ingestion contract.
 
 ## Where to look in the code
 
