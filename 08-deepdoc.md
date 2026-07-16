@@ -31,7 +31,7 @@ The pipeline moves through a clear chain:
 5. Rebuild reading order with the text merge helpers and the `updown_concat_xgb.model` scorer.
 6. Emit ordered sections and table artifacts that downstream chunking can consume.
 
-The layout recognizer works with the labels in `deepdoc/vision/layout_recognizer.py`: `_background_`, `Text`, `Title`, `Figure`, `Figure caption`, `Table`, `Table caption`, `Header`, `Footer`, `Reference`, and `Equation`. The table structure recognizer works with `table`, `table column`, `table row`, `table column header`, `table projected row header`, and `table spanning cell`. Those labels matter because they determine which boxes stay in prose, which boxes become table content, and which boxes drop out as page furniture.
+The layout recognizer works with the labels in `deepdoc/vision/layout_recognizer.py`: `_background_`, `Text`, `Title`, `Figure`, `Figure caption`, `Table`, `Table caption`, `Header`, `Footer`, `Reference`, and `Equation`, and the default `LayoutRecognizer4YOLOv10` path overrides that base list with a smaller runtime set. The table structure recognizer works with `table`, `table column`, `table row`, `table column header`, `table projected row header`, and `table spanning cell`. Those labels matter because they determine which boxes stay in prose, which boxes become table content, and which boxes drop out as page furniture.
 
 DeepDoc also treats figures as first-class page regions. `RAGFlowPdfParser._extract_table_figure` crops figure and table regions from the rendered page images, preserves their position tags, and emits them as separate artifacts. That keeps the figure image available to later enrichment without flattening it into unrelated body text.
 
