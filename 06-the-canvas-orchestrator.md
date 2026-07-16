@@ -21,7 +21,7 @@ Canvas does not treat the DSL as static text. It turns each node into a componen
 - Control flow: `categorize`, `switch`, `iteration`, `loop`, `exit_loop`. These nodes choose the next branch or enter the body again until the stop condition fires.
 - Model work: `llm`, `agent_with_tools`. These nodes build prompts, call the model, and let an agent use tools mid turn.
 - Data shaping: `string_transform`, `data_operations`, `list_operations`, `variable_aggregator`. These nodes reshape text, objects, lists, and grouped variables.
-- I/O: `begin`, `message`, `fillup`, `invoke`, `browser`. These nodes seed inputs, stream output, call HTTP endpoints, and drive browser tasks.
+- `I/O`: `begin`, `message`, `fillup`, `invoke`, `browser`. These nodes seed inputs, stream output, call HTTP endpoints, and drive browser tasks.
 
 ## Execution model
 
@@ -43,7 +43,7 @@ Components schedule graph work; tools extend an LLM powered component after the 
 
 ## Mermaid diagram
 
-The diagram below shows two ready branches in the same window and a loop body that re enters the queue until the stop condition returns true.
+The diagram below shows two ready branches in the same window and a loop body that cycles through the queue until the stop condition returns true.
 
 ```mermaid
 flowchart LR
