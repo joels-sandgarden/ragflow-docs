@@ -5,7 +5,7 @@ slug: /02-anatomy-of-ingestion
 
 # Anatomy of ingestion
 
-RAGFlow's ingestion path is an asynchronous data plane. The API writes SQL rows, stores file bytes, and publishes work; a separate worker consumes Redis streams, turns slices of a document into chunks, enriches them, embeds them, and writes search rows. The UI watches the SQL state that those services keep in sync.
+RAGFlow's ingestion path runs as an asynchronous data plane. The API writes SQL rows, stores file bytes, and publishes work; a separate worker consumes Redis streams and turns document slices into chunks, adds enrichment, builds embeddings, and writes search rows. The UI watches the SQL state that those services keep in sync.
 
 ## The pipeline at a glance
 
@@ -42,7 +42,7 @@ flowchart LR
 
 ## The worker: one long running orchestrator
 
-`rag/svr/task_executor.py` runs as a standalone async process. `collect()` pulls the next message from the stream, and `do_handle_task()` routes the task into the right branch. The live branches cover standard parsing, RAPTOR, GraphRAG, Mindmap, memory, and dataflow work, and the queue taxonomy also includes artifact and skill work. GraphRAG follows the knowledge graph path described in [/05-graphrag.md](/05-graphrag.md), while the rest of this page stays focused on ingestion rather than downstream retrieval.
+`rag/svr/task_executor.py` runs as a standalone async process. `collect()` pulls the next message from the stream, and `do_handle_task()` routes the task into the right branch. The live worker handles standard parsing, RAPTOR, GraphRAG, Mindmap, memory, and dataflow work. The wider task family also names artifact and skill work, which keeps the queue model broader than plain parsing. GraphRAG follows the knowledge graph path described in [/05-graphrag.md](/05-graphrag.md), while the rest of this page stays focused on ingestion rather than downstream retrieval.
 
 ## Parse and chunk: choose the parser, then build chunks
 
@@ -50,7 +50,7 @@ flowchart LR
 
 ## Enrichment: turn raw chunks into better retrieval material
 
-After chunking, the worker can layer extra signal onto each chunk: auto keywords, auto questions, metadata, tag assignment, and PageIndex extraction. These layers do not replace the original chunks; they widen the search surface and give the retrieval stack more ways to land on the right answer.
+After chunking, the worker can layer extra signal onto each chunk: auto keywords, auto questions, metadata, tag assignment, and table of contents or PageIndex extraction. These layers do not replace the original chunks; they widen the search surface and give the retrieval stack more ways to land on the right answer.
 
 RAPTOR adds a second structure on top of that base. The worker clusters related chunks, summarizes each cluster, and repeats that process on the summaries to build a tree of higher level chunks. The leaf chunks still matter, but the tree gives the system broader context for multi hop retrieval. The same pass can run at file scope or dataset scope, depending on configuration, so one dataset can keep the summary tree narrow or make it shared across files.
 
@@ -62,7 +62,7 @@ The worker binds the dataset's pinned embedding model before it starts indexing.
 
 The worker and the API both write progress back into SQL so the UI never needs to inspect Redis directly. `TaskService.update_progress()` appends progress messages and completion state to each task row, while `DocumentService._sync_progress()` rolls those task rows up into the document row and keeps queue lag visible. Cancellation follows the same pattern: `cancel_all_task_of()` writes cancel flags into Redis, `has_canceled()` checks them in the worker, and `DocumentService.do_cancel()` lets the rest of the system short circuit work that no longer matters.
 
-> Note, as of July 2026: `rag/svr/task_executor_refactor/` and `rag/flow/` both hold active refactor work. This page describes the live orchestrator in `rag/svr/task_executor.py`.
+> As of July 2026, `rag/svr/task_executor_refactor/` and `rag/flow/` both hold active refactor work. This page describes the live orchestrator in `rag/svr/task_executor.py`.
 
 ## Where to look in the code
 
@@ -71,4 +71,4 @@ The worker and the API both write progress back into SQL so the UI never needs t
 - `api/db/services/document_service.py` — keeps document state, chunk counters, and progress summaries in SQL.
 - `rag/utils/redis_conn.py` — provides Redis streams, consumer groups, pending message iteration, and cancel flags.
 - `rag/svr/task_executor.py` — collects tasks, builds chunks, adds enrichment, embeds content, and writes to the document engine.
-- `rag/flow/pipeline.py` — the DSL driven ingestion path that sits beside the classic orchestrator.
+- `rag/flow/pipeline.py` — the DSL-driven ingestion path that sits beside the classic orchestrator.
