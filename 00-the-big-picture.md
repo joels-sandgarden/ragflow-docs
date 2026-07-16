@@ -96,8 +96,8 @@ As of mid-2026, the repository also includes an in-flight Go rewrite in `cmd/` a
 ## Where to look in the code
 
 - `api/ragflow_server.py` — boots the HTTP server, database, plugins, and background workers.
-- `api/db/db_models.py` — defines the relational backbone for knowledge bases, documents, tasks, dialogs, and canvases.
-- `api/db/services/` — owns dataset lifecycle, document management, task tracking, and query orchestration.
-- `rag/svr/task_executor.py` — performs parsing, chunking, embedding, and indexing.
-- `rag/nlp/search.py` — searches chunks, reranks results, and inserts citations.
-- `agent/canvas.py` — runs the agent graph and tool calls.
+- `api/apps/__init__.py` and `api/apps/restful_apis/` — assemble the Quart app and REST routes.
+- `api/db/db_models.py` — defines the relational backbone for the domain rows.
+- `api/db/services/knowledgebase_service.py`, `api/db/services/document_service.py`, `api/db/services/task_service.py`, and `api/db/services/dialog_service.py` — manage knowledge bases, documents, tasks, and chat orchestration.
+- `rag/svr/task_executor.py` — parses sources, builds chunks, embeds content, and writes index data.
+- `rag/nlp/search.py`, `common/settings.py`, `common/doc_store/doc_store_base.py`, and `agent/canvas.py` — handle retrieval, backend wiring, storage abstraction, and agent orchestration.
