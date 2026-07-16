@@ -1,18 +1,18 @@
 # About this site
 
-This site presents a concept-level field guide to the RAGFlow codebase. It explains why the major subsystems exist, which ideas organize them, and how the pieces fit together so an engineer can build a mental model without reading the code end to end. The guide stays at the level of concepts and relationships, not setup steps or API reference.
+This site presents a concept-level field guide to the RAGFlow codebase. It explains why the major subsystems exist, which ideas organize them, and how the pieces fit together so an engineer can build a mental model without reading the code end to end. The guide frames the rest of the series and keeps the focus on concepts and relationships rather than setup steps or API reference.
 
-The intended reader is an engineer adopting, operating, extending, or contributing to RAGFlow. The guide assumes comfort with code and infrastructure, but it keeps the focus on the shape of the system rather than on individual commands or screens. That makes it a companion for readers who need the architecture before they open the source.
+The intended reader is an engineer adopting, operating, extending, or contributing to RAGFlow. The guide assumes comfort with code and infrastructure, but it keeps the focus on the shape of the system rather than on individual commands or screens. That gives the reader enough context to use the code maps in the other chapters without treating this page as a tutorial.
 
-Doc Holiday (https://doc.holiday) wrote this guide directly from the RAGFlow source repository. The pages reflect the repository at the snapshot recorded below and use the code as the primary source of truth. The site map follows the order of the system itself, from the broadest overview to narrower subsystems, so each chapter can stand alone while still fitting into the larger mental model.
+Doc Holiday (https://doc.holiday) wrote this guide directly from the RAGFlow source repository. The pages reflect the repository at the snapshot recorded below and use the code as the primary source of truth. The writing follows the source structure, so each chapter names a subsystem, explains the idea that holds it together, and shows how it connects to neighboring parts of the system. Readers can use the overview first and then move toward the chapter that matches the work at hand.
 
 Repository snapshot: [GENERATED_FROM: commit SHORT_SHA, DATE — the operator will replace this placeholder; include it verbatim if you cannot determine it]
 
-The official documentation at https://ragflow.io/docs/dev/ remains the authoritative source for quickstarts, UI guidance, component and API reference, and operations. This field guide complements that material by describing the architecture and the path a request follows through the system.
+The official documentation at https://ragflow.io/docs/dev/ remains the authoritative source for quickstarts, UI guidance, component and API reference, and operations. This field guide complements that material by describing the architecture and the path a request follows through the system. It does not repeat procedural material or compete with the product documentation; it explains the mental model that makes that material easier to use.
 
-The repository changes actively. When the guide mentions migration work or transitional behavior, those notes describe the state of the code at the time of writing. They do not define the main subject of the guide.
+The repository changes actively. When the guide mentions migration work or transitional behavior, those notes describe the state of the code at the time of writing. They do not define the main subject of the guide. Those dated observations keep the guide honest in a live repository, but they stay secondary to the architecture story.
 
-This guide does not try to replace the product documentation. It names the load bearing paths, explains the trade offs that shape them, and leaves procedural detail to the official material. That keeps the field guide short, factual, and useful as a map rather than a manual.
+This guide names the load-bearing paths and the decisions that shape them, then leaves detailed operation to the official material. Each chapter starts with the subsystem's purpose and ends with a short map of the code paths that carry that idea. The series map below follows the same progression from the broad system view to query flow, ingestion, chunking, embeddings, graph retrieval, canvas orchestration, document engines, and DeepDoc. That order lets a reader move from context to detail without losing the thread.
 
 Corrections or repository links: [CONTACT_OR_REPO_LINK placeholder for the operator]
 
