@@ -35,7 +35,7 @@ A newer per-instance model configuration layer lives in `api/db/joint_services/t
 
 ## Why the choice stays pinned
 
-The doc engine stores vectors in fields whose names encode the vector size, such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. The mapping files keep those vectors beside the chunk text in the same record, so the engine treats embedding shape as part of the stored document, not as an afterthought. That makes one dataset depend on one embedding dimensionality and, by extension, one embedding family at a time.
+The doc engine stores vectors in fields whose names encode the vector size, such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. `conf/mapping.json` keeps those vectors beside the chunk text in the same record, and Infinity adds the `q_<dim>_vec` column dynamically in `create_idx`, so the engine treats embedding shape as part of the stored document, not as an afterthought. That makes one dataset depend on one embedding dimensionality and, by extension, one embedding family at a time.
 
 `rag/svr/task_executor.py` makes that dependency explicit. `do_handle_task` binds the embedding model, probes it to learn `vector_size`, passes that size into `init_kb`, and then uses the same size for every chunk it stores in that ingestion run. When the embedding model changes, the stored chunks no longer match the field the engine expects, so the dataset needs a fresh parse and fresh vectors. Re-embedding does not just improve quality; it rebuilds the storage shape that retrieval depends on.
 
