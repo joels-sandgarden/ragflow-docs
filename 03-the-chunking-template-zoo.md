@@ -50,7 +50,7 @@ That storage contract matters because it keeps user-visible behavior stable even
 
 ## A dated note on the next path
 
-As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
+As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](/docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
 
 As of July 2026, `rag/flow/` also points past the fixed template zoo. `rag/flow/pipeline.py`, `rag/flow/chunker/token_chunker.py`, and `rag/flow/extractor/extractor.py` let parser, chunker, and extractor components compose as a graph, so the ingestion path can express more than a fixed template choice while still reusing the same chunk contract.
 
