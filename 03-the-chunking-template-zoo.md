@@ -14,19 +14,19 @@ That common shape gives the rest of the system a stable handoff. The retrieval l
 
 ### General and token budget
 
-`rag/app/naive.py`, `rag/app/book.py`, `rag/app/manual.py`, and `rag/app/laws.py` aim for broad coverage. They merge text into token bounded chunks, keep sentence flow intact when possible, and let document structure steer the merge when headings or legal sections carry real meaning. This family works well when the source reads like prose with an internal spine, but it can blur local detail if the source mixes long narrative passages with dense reference material.
+`rag/app/naive.py` handles the broad token budget path. It merges text into token bounded chunks, keeps sentence flow intact when possible, and lets delimiters steer the merge when boundaries matter more than raw count. It also chooses the PDF backend for ingestion: DeepDoc layout analysis, plain text, or integrated third party parsers such as MinerU and Docling. The adjacent DeepDoc discussion lives in [08-deepdoc.md](./08-deepdoc.md). This path works well when the source reads like prose with a simple spine, but it can blur local detail if the source mixes long narrative passages with dense reference material.
 
 ### Layout and structure driven
 
-`rag/app/paper.py` and `rag/app/presentation.py` treat page order, headings, tables, and thumbnails as first class signals. The paper path protects the abstract, authorship, and section flow; the presentation path keeps each page as a chunk and preserves the page image. This approach keeps citations, page context, and visual order close to the text, even when the chunk size stops looking uniform.
+`rag/app/paper.py`, `rag/app/book.py`, `rag/app/manual.py`, `rag/app/laws.py`, and `rag/app/presentation.py` treat page order, headings, tables, and thumbnails as first class signals. The paper path protects the abstract, authorship, and section flow; the book and manual paths follow hierarchy and section order; the laws path turns headings and tables into legal sections; and the presentation path keeps each page as a chunk and preserves the page image. This approach keeps citations, page context, and visual order close to the text, even when the chunk size stops looking uniform.
 
 ### Record shaped
 
-`rag/app/qa.py`, `rag/app/table.py`, `rag/app/resume.py`, and `rag/app/email.py` build records instead of prose blocks. A question pair, a spreadsheet row, a resume field bundle, or an email body with attachments already has an internal shape, so the chunker should preserve that shape instead of flattening it into a paragraph. The tradeoff is clear: these chunks answer targeted queries well, but they do not read like natural narrative excerpts.
+`rag/app/qa.py`, `rag/app/table.py`, and `rag/app/resume.py` build records instead of prose blocks. A question pair, a spreadsheet row, or a resume field bundle already has an internal shape, so the chunker should preserve that shape instead of flattening it into a paragraph. The tradeoff is clear: these chunks answer targeted queries well, but they do not read like natural narrative excerpts.
 
 ### Whole document and special cases
 
-`rag/app/one.py` keeps the original order and emits a single chunk per file or page set when the document boundary matters more than internal splitting. `rag/app/picture.py` and `rag/app/audio.py` turn media into text bearing chunks through OCR, vision, or transcription, which makes non textual sources searchable without pretending that the text came from a plain document. `rag/app/tag.py` sits apart from the rest of the zoo: it produces label bearing records for tag workflows, not a normal retrieval corpus.
+`rag/app/one.py`, `rag/app/picture.py`, `rag/app/audio.py`, `rag/app/email.py`, and `rag/app/tag.py` keep whole documents or special payloads intact when a normal split would break the source model. `rag/app/one.py` keeps the original order and emits a single chunk per file or page set when the document boundary matters more than internal splitting. `rag/app/picture.py` and `rag/app/audio.py` turn media into text bearing chunks through OCR, vision, or transcription, which makes non textual sources searchable without pretending that the text came from a plain document. `rag/app/email.py` aggregates the body and attachments into one record, and `rag/app/tag.py` stays apart from the rest of the zoo because it produces label bearing records for tag workflows, not a normal retrieval corpus.
 
 ## The shared machinery underneath
 
@@ -40,15 +40,16 @@ The chunk record continues into the document engine as a retrieval document. `ra
 
 The later ingestion path in `rag/flow/pipeline.py` makes the handoff explicit. It normalizes the upstream output, adds document and knowledge base fields, assigns positions, and prepares the final payload before indexing. That shape belongs in `./07-the-doc-engine-abstraction.md`; this chapter only needs to show that the chunk record becomes a document engine document, not a temporary parser artifact.
 
-> Note, July 2026: parent child chunking remains a separate layer that sits on top of these templates. The user level walkthrough lives in [/docs/guides/dataset/configure_child_chunking_strategy.md](/docs/guides/dataset/configure_child_chunking_strategy.md).
+> Note, July 2026: parent child chunking remains a separate layer that sits on top of these templates. See the official documentation: [configure_child_chunking_strategy](https://ragflow.io/docs/dev/configure_child_chunking_strategy).
 
 > Note, July 2026: the newer ingestion path in `rag/flow/pipeline.py` and `rag/flow/chunker/token_chunker.py` turns the same job into composable graph components. Fixed templates still matter, but the pipeline direction generalizes chunking into reusable nodes.
 
 ## Where to look in the code
 
 - `rag/svr/task_executor.py`: `FACTORY` and `build_chunks()` select the parser template and start ingestion.
-- `rag/app/naive.py`: the general token budget path and the media aware merge helpers live here.
-- `rag/app/paper.py` and `rag/app/presentation.py`: these files show structure preserving and page aware chunking.
-- `rag/app/table.py` and `rag/app/resume.py`: these files show record shaped chunk construction.
+- `rag/app/naive.py`: the general token budget path and PDF backend choice live here.
+- `rag/app/paper.py`, `rag/app/book.py`, `rag/app/manual.py`, `rag/app/laws.py`, and `rag/app/presentation.py`: these files show structure preserving and page aware chunking.
+- `rag/app/qa.py`, `rag/app/table.py`, and `rag/app/resume.py`: these files show record shaped chunk construction.
+- `rag/app/one.py`, `rag/app/picture.py`, `rag/app/audio.py`, `rag/app/email.py`, and `rag/app/tag.py`: these files show whole document and special case handling.
 - `rag/nlp/__init__.py` and `rag/nlp/rag_tokenizer.py`: these files hold the shared tokenization and context helpers.
 - `rag/flow/pipeline.py` and `rag/flow/chunker/token_chunker.py`: these files show the composable ingestion direction.
