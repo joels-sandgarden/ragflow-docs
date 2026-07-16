@@ -4,20 +4,20 @@ RAGFlow defines a document engine because retrieval needs a narrow mix of capabi
 
 ## Series map
 
-- [00-the-big-picture](./00-the-big-picture.md)
-- [01-anatomy-of-a-query](./01-anatomy-of-a-query.md)
-- [02-anatomy-of-ingestion](./02-anatomy-of-ingestion.md)
-- [03-the-chunking-template-zoo](./03-the-chunking-template-zoo.md)
-- [04-the-embedding-layer](./04-the-embedding-layer.md)
-- [05-graphrag](./05-graphrag.md)
-- [06-the-canvas-orchestrator](./06-the-canvas-orchestrator.md)
-- [07-the-doc-engine-abstraction](./07-the-doc-engine-abstraction.md)
-- [08-deepdoc](./08-deepdoc.md)
-- [09-about-this-site](./09-about-this-site.md)
+- [./00-the-big-picture.md](./00-the-big-picture.md)
+- [./01-anatomy-of-a-query.md](./01-anatomy-of-a-query.md)
+- [./02-anatomy-of-ingestion.md](./02-anatomy-of-ingestion.md)
+- [./03-the-chunking-template-zoo.md](./03-the-chunking-template-zoo.md)
+- [./04-the-embedding-layer.md](./04-the-embedding-layer.md)
+- [./05-graphrag.md](./05-graphrag.md)
+- [./06-the-canvas-orchestrator.md](./06-the-canvas-orchestrator.md)
+- [./07-the-doc-engine-abstraction.md](./07-the-doc-engine-abstraction.md)
+- [./08-deepdoc.md](./08-deepdoc.md)
+- [./09-about-this-site.md](./09-about-this-site.md)
 
 ## Why this layer exists
 
-The abstraction serves a workload, not a general search platform. The retrieval layer needs to express lexical intent, dense similarity, sparse and tensor style matches, and sort order without hard coding engine syntax, because the same chunk records must support search, bulk mutation, and tenant scoped reads. The operational switch lives in [Switch document engine](./docs/develop/switch_doc_engine.md), but this page describes the design that makes that switch possible.
+The abstraction serves a workload, not a general search platform. The retrieval layer needs to express lexical intent, dense similarity, sparse and tensor style matches, and sort order without hard coding engine syntax, because the same chunk records must support search, bulk mutation, and tenant scoped reads. The operational switch lives in [Switch document engine](https://ragflow.io/docs/dev/switch_doc_engine), but this page describes the design that makes that switch possible.
 
 ## The portable contract
 
