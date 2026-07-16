@@ -8,7 +8,7 @@ If the ingestion path needs a broader context, see [Anatomy of ingestion](./02-a
 
 PDFs do not behave like plain text files. A PDF can carry a usable text layer, a scanned page image, or a mixture of both, and the reading order can break across columns, captions, headers, and tables. DeepDoc treats that as a visual interpretation problem because the page image often carries more reliable structure than the text layer alone.
 
-The baseline parser renders each page with `pdfplumber`, then lets `OCR` recover text boxes and `LayoutRecognizer` attach page-level structure. The OCR path in `deepdoc/vision/ocr.py` also rejects obviously garbled text and falls back to recognition when the embedded PDF text layer looks broken. That keeps the parser honest when the file contains fonts, encodings, or scanned regions that text extraction cannot decode well.
+The baseline parser renders each page with `pdfplumber`, then lets `OCR` recover text boxes and `LayoutRecognizer` attach page-level structure. The garbled-text rejection and fallback live in `deepdoc/parser/pdf_parser.py` (`RAGFlowPdfParser`); `deepdoc/vision/ocr.py` does detection and recognition only. That keeps the parser honest when the file contains fonts, encodings, or scanned regions that text extraction cannot decode well.
 
 ## DeepDoc splits the problem into parser and vision
 
