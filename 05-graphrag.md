@@ -38,7 +38,7 @@ Extraction often creates near-duplicate nodes for the same real-world entity. If
 
 ### Embeddings and persistence
 
-`rag/graphrag/general/entity_embedding.py` embeds graph entities so vector search can find them. `rag/graphrag/utils.py` persists the finished graph back into the doc store as the global graph, per document subgraphs, entity chunks, relation chunks, and community report chunks. GraphRAG therefore lives in the same retrieval store as ordinary chunks rather than in a separate side index.
+`rag/graphrag/utils.py` embeds graph entities and relations so vector search can find them, and it persists the finished graph back into the doc store as the global graph, per document subgraphs, entity chunks, and relation chunks. `rag/graphrag/general/entity_embedding.py` is just an unused node2vec utility. GraphRAG therefore lives in the same retrieval store as ordinary chunks rather than in a separate side index.
 
 ## Query time: graph retrieval joins the normal dealer flow
 
