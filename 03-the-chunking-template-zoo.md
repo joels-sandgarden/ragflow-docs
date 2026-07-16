@@ -18,7 +18,7 @@ The most visible anchors are `content_with_weight`, `content_ltks`, and `content
 
 `rag/app/naive.py` carries the default path for mixed documents. It walks through text with delimiter-aware merging, stops when the token budget reaches its target, and then emits chunks. That makes it the safe baseline for content that does not announce a stronger structure.
 
-The same module also picks the PDF backend. `PARSERS` and `normalize_layout_recognizer` route PDF work across DeepDoc, plain text, and third-party backends such as MinerU, Docling, OpenDataLoader, TCADP, PaddleOCR, and SoMark. For the deeper backend story, see [/08-deepdoc.md](/08-deepdoc.md) and the PDF parser selection guide at [/docs/guides/dataset/select_pdf_parser.md](/docs/guides/dataset/select_pdf_parser.md).
+The same module also picks the PDF backend. `PARSERS` and `normalize_layout_recognizer` route PDF work across DeepDoc, plain text, and third-party backends such as MinerU, Docling, OpenDataLoader, TCADP, PaddleOCR, and SoMark. For the deeper backend story, see [/08-deepdoc.md](08-deepdoc.md) and the PDF parser selection guide at [/docs/guides/dataset/select_pdf_parser.md](docs/guides/dataset/select_pdf_parser.md).
 
 ### Layout and structure-driven templates
 
@@ -50,7 +50,7 @@ That storage contract matters because it keeps user-visible behavior stable even
 
 ## A dated note on the next path
 
-As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
+As of July 2026, the parent-child strategy already handles the tension between recall and local context by keeping a parent chunk alongside narrower children. See [/docs/guides/dataset/configure_child_chunking_strategy.md](/docs/guides/dataset/configure_child_chunking_strategy.md) for the user-facing version of that idea.
 
 As of July 2026, `rag/flow/` also points past the fixed template zoo. `rag/flow/pipeline.py`, `rag/flow/chunker/token_chunker.py`, and `rag/flow/extractor/extractor.py` let parser, chunker, and extractor components compose as a graph, so the ingestion path can express more than a fixed template choice while still reusing the same chunk contract.
 
