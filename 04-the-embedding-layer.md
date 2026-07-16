@@ -19,7 +19,6 @@ The embedding layer turns chunks and questions into vectors that the doc engine 
 - [08 deepdoc](./08-deepdoc.md)
 - [09 about this site](./09-about-this-site.md)
 
-
 ## What the embedding layer does
 
 `rag/llm/embedding_model.py` defines the common shape. `Base` gives every provider the same surface, `_batched_encode` drives batch requests and keeps input order stable, and `EmbeddingError` turns provider failures into one consistent error path. Each provider also owns its own ceiling logic: some models truncate aggressively before request time, some depend on server-side truncation, and some retry around transient failures. The effect stays the same: callers hand over text, and the provider decides how to fit it into the model's limits.
