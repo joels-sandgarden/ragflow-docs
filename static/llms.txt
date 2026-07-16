@@ -1,0 +1,24 @@
+# RAGFlow Field Guide
+
+> A concept-level field guide to the RAGFlow codebase, written by Doc Holiday
+> (https://doc.holiday) by exploring the RAGFlow source directly. Each page explains why a
+> subsystem exists, its central abstractions, and how it relates to its neighbors.
+> Every doc page is also served as plain markdown at <page-url>/index.md.
+
+## Pages
+
+- [The Big Picture](/docs/the-big-picture/): the map of the whole system
+- [Anatomy of a Query](/docs/anatomy-of-a-query/): one chat question traced end to end
+- [Anatomy of Ingestion](/docs/anatomy-of-ingestion/): the task-executor pipeline
+- [The Chunking Template Zoo](/docs/the-chunking-template-zoo/): the chunk templates and their shared machinery
+- [The Embedding Layer](/docs/the-embedding-layer/): one interface over dozens of providers
+- [GraphRAG](/docs/graphrag/): knowledge-graph construction and retrieval
+- [The Canvas Orchestrator](/docs/the-canvas-orchestrator/): the agent workflow engine
+- [The Document Engine Abstraction](/docs/the-document-engine-abstraction/): one search API over Elasticsearch, OpenSearch, Infinity, and OceanBase
+- [DeepDoc](/docs/deepdoc/): deep document understanding
+- [About This Site](/docs/about-this-site/): scope, audience, provenance
+
+## See also
+
+- Official RAGFlow documentation: https://ragflow.io/docs/dev/
+- RAGFlow source: https://github.com/infiniflow/ragflow
