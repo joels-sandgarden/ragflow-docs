@@ -22,7 +22,7 @@ The shared base classes in `common/doc_store/` hold the common contract, while t
 
 The mapping files describe one conceptual chunk record, not four unrelated schemas. `conf/mapping.json` gives Elasticsearch and OpenSearch the suffix driven field model: tokenized text fields, keyword fields, rank feature fields, and dense vectors such as `q_512_vec`, `q_768_vec`, `q_1024_vec`, and `q_1536_vec`. `conf/infinity_mapping.json` expresses the same idea through Infinity's column model with fields such as `docnm`, `important_keywords`, `questions`, `content`, `authors`, `pagerank_fea`, `tag_feas`, and positional fields.
 
-The adapters reshape the same conceptual data before it reaches storage. Infinity turns the chunk into its own column layout, ES and OpenSearch lean on dynamic mappings that follow the suffix conventions, and OceanBase stores the same record as SQL columns, arrays, and JSON values. The metadata tables follow the same pattern: `conf/doc_meta_es_mapping.json` and `conf/doc_meta_infinity_mapping.json` define the per tenant `ragflow_doc_meta_{tenant_id}` contract.
+The adapters reshape that model before storage. Infinity turns the chunk into its own column layout, ES and OpenSearch lean on dynamic mappings that follow the suffix conventions, and OceanBase stores the record as SQL columns, arrays, and JSON values. The metadata tables follow the same pattern: `conf/doc_meta_es_mapping.json` and `conf/doc_meta_infinity_mapping.json` define the per tenant `ragflow_doc_meta_{tenant_id}` contract.
 
 Tenant and dataset scope stay explicit in naming. ES and OpenSearch keep a tenant level chunk index and filter by `kb_id`, Infinity builds chunk tables from the tenant index name plus the knowledge base id, and OceanBase follows the same per tenant isolation idea through its own naming helpers.
 
@@ -42,8 +42,8 @@ As of July 2026, the Go rewrite under `internal/engine/` mirrors this design wit
 
 ## Where to look in the code
 
-- `common/doc_store/doc_store_base.py` — abstract connection contract and portable query objects.
+- `common/doc_store/doc_store_base.py` — core abstract interface and portable query objects.
 - `common/settings.py` — `DOC_ENGINE` selection and `settings.docStoreConn` wiring.
-- `rag/nlp/search.py` — `Dealer`, portable query composition, and rerank branching.
+- `rag/nlp/search.py` — `Dealer`, query composition, and rerank branching.
 - `conf/mapping.json`, `conf/infinity_mapping.json`, `conf/doc_meta_es_mapping.json`, `conf/doc_meta_infinity_mapping.json` — chunk and metadata schema contracts.
 - `rag/utils/es_conn.py`, `rag/utils/infinity_conn.py`, `rag/utils/ob_conn.py`, `rag/utils/opensearch_conn.py` — concrete adapters and backend specific search behavior.
