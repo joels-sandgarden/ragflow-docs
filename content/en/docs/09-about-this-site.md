@@ -10,7 +10,7 @@ The intended reader is an engineer adopting, operating, extending, or contributi
 
 Doc Holiday (https://doc.holiday) wrote this guide directly from the RAGFlow source repository. Every page grounds its claims in the repository snapshot through real file paths and symbol names, so the reader can move from the guide to the source without translation. The writing follows the source structure, so each chapter names a subsystem, explains the idea that holds it together, and shows how it connects to neighboring parts of the system. Readers can use the overview first and then move toward the chapter that matches the work at hand.
 
-Repository snapshot: [GENERATED_FROM: commit SHORT_SHA, DATE — the operator will replace this placeholder; include it verbatim if you cannot determine it]
+Repository snapshot: commit df5c8e73f (2026-07-16) of https://github.com/infiniflow/ragflow — the state of the code every page was written against and fact-checked with.
 
 The official documentation at https://ragflow.io/docs/dev/ remains the authoritative source for quickstarts, UI guides, component and API reference, and operations. This field guide complements that material by describing the architecture and the path a request follows through the system. It does not repeat procedural material or compete with the product documentation; it explains the mental model that makes that material easier to use. In that role, the site bridges a first pass through the product and a deeper reading of the source tree.
 
@@ -18,7 +18,7 @@ The repository changes actively. When the guide mentions migration work or trans
 
 This guide names the load-bearing paths and the decisions that shape them, then leaves detailed operation to the official material. Each chapter starts with the subsystem's purpose and ends with a short map of the code paths that carry that idea. The series map below follows the same progression from the broad system view through query flow, ingestion, chunking, embeddings, graph retrieval, canvas orchestration, document engines, and DeepDoc. That order helps a reader move from context to detail without losing the thread. It also keeps the closing page concise, so the table of contents carries the navigation load.
 
-Corrections or repository links: [CONTACT_OR_REPO_LINK placeholder for the operator]
+Corrections are welcome via issues and pull requests at https://github.com/sandgardenhq/ragflow-docs.
 
 ## Series map
 
